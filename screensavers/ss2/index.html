@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>NTV360 Player — Display Pairing Screensaver</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #00263e;
+    --navy-dark: #020b14;
+    --violet: #a00558;
+    --red: #ef060f;
+    --orange: #f18029;
+    --white: #ffffff;
+    --muted: #94a3b8;
+    --bg: #030712;
+    --card-bg: rgba(10, 20, 34, 0.75);
+    --card-border: rgba(255, 255, 255, 0.12);
+    --brand-gradient: linear-gradient(135deg, var(--red) 0%, var(--orange) 50%, var(--violet) 100%);
+    --brand-gradient-horizontal: linear-gradient(90deg, var(--red), var(--orange), var(--violet));
+    --glow-orange: rgba(241, 128, 41, 0.4);
+    --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    background-color: var(--bg);
+    color: var(--white);
+    font-family: var(--font-main);
+    overflow: hidden;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Background Ambient Dynamic Canvas */
+  #bg-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Ambient Glowing Background Orbs */
+  .aurora {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(140px);
+    opacity: 0.4;
+    z-index: 0;
+    pointer-events: none;
+    animation: floatAurora 22s ease-in-out infinite alternate;
+  }
+
+  .aurora-1 {
+    top: -20%;
+    right: -10%;
+    width: 65vw;
+    height: 65vw;
+    background: radial-gradient(circle, var(--orange) 0%, rgba(241, 128, 41, 0) 70%);
+  }
+
+  .aurora-2 {
+    bottom: -30%;
+    left: -15%;
+    width: 70vw;
+    height: 70vw;
+    background: radial-gradient(circle, var(--violet) 0%, rgba(160, 5, 88, 0) 70%);
+    animation-delay: -11s;
+  }
+
+  @keyframes floatAurora {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-50px, 40px) scale(1.08); }
+    100% { transform: translate(40px, -60px) scale(0.95); }
+  }
+
+  /* Main Viewport Container with subtle OLED Burn-In prevention motion */
+  .tv-viewport {
+    position: relative;
+    z-index: 10;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(2.5rem, 5vh, 4rem) clamp(3.5rem, 6vw, 6rem);
+    transition: transform 15s ease-in-out;
+  }
+
+  /* TV Header Bar */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: clamp(2.2rem, 3.2vw, 3rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  .logo-mark {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    background: var(--brand-gradient);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 30px var(--glow-orange);
+  }
+
+  .logo-mark svg {
+    width: 30px;
+    height: 30px;
+    fill: white;
+  }
+
+  .logo-text em {
+    font-style: normal;
+    background: var(--brand-gradient-horizontal);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .logo-text b {
+    color: var(--white);
+    font-weight: 800;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.8rem;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1.4rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(20px);
+    border-radius: 999px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+
+  .status-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 14px var(--orange);
+    animation: pulseGlow 2s infinite ease-in-out;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 14px var(--orange); }
+    50% { transform: scale(1.35); opacity: 0.5; box-shadow: 0 0 6px var(--orange); }
+  }
+
+  .live-clock {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.03em;
+  }
+
+  /* Main Grid Layout for TV */
+  main {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: clamp(3rem, 6vw, 7rem);
+    align-items: center;
+    margin: auto 0;
+    width: 100%;
+    max-width: 1750px;
+    align-self: center;
+  }
+
+  /* Left Column */
+  .left-content {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.8rem, 3.5vh, 2.8rem);
+  }
+
+  .eyebrow-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--orange);
+    background: rgba(241, 128, 41, 0.12);
+    border: 1px solid rgba(241, 128, 41, 0.3);
+    padding: 0.45rem 1.1rem;
+    border-radius: 8px;
+    width: fit-content;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 5vw, 4.8rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--white);
+  }
+
+  h1 span {
+    background: var(--brand-gradient-horizontal);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Step Cards for 10-foot readability */
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    padding: 1.2rem 1.6rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    backdrop-filter: blur(14px);
+  }
+
+  .step-number {
+    flex-shrink: 0;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 50%;
+    background: var(--brand-gradient);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--white);
+    box-shadow: 0 4px 16px var(--glow-orange);
+  }
+
+  .step-text {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #f1f5f9;
+  }
+
+  .step-text b {
+    color: var(--orange);
+    font-weight: 700;
+  }
+
+  /* Right Column: Code Card */
+  .right-content {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .glass-card {
+    width: 100%;
+    max-width: 640px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border-radius: 40px;
+    padding: clamp(2.5rem, 5vw, 3.8rem);
+    box-shadow: 0 50px 120px -20px rgba(0, 0, 0, 0.85),
+                0 0 100px -20px var(--glow-orange);
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--orange), var(--red), transparent);
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-label {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  /* Auto-refresh timer ring indicator */
+  .refresh-widget {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .timer-svg {
+    width: 22px;
+    height: 22px;
+    transform: rotate(-90deg);
+  }
+
+  .timer-circle-bg {
+    stroke: rgba(255, 255, 255, 0.15);
+    stroke-width: 3;
+    fill: none;
+  }
+
+  .timer-circle-progress {
+    stroke: var(--orange);
+    stroke-width: 3;
+    fill: none;
+    stroke-dasharray: 56.5;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear;
+  }
+
+  .timer-text {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  /* Giant 6-Digit Pairing PIN for TV viewing */
+  .code-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: clamp(0.5rem, 1.2vw, 1rem);
+  }
+
+  .code-digit {
+    aspect-ratio: 0.82;
+    background: linear-gradient(180deg, rgba(16, 32, 52, 0.95) 0%, rgba(3, 11, 20, 0.98) 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    border-bottom: 5px solid var(--orange);
+    border-radius: 20px;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 4.5vw, 4rem);
+    color: var(--white);
+    box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.7);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .code-digit::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 45%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .code-digit.flip {
+    animation: flipDigit 0.5s ease-out;
+  }
+
+  @keyframes flipDigit {
+    0% { transform: rotateX(0deg); opacity: 1; }
+    50% { transform: rotateX(90deg); opacity: 0.3; }
+    100% { transform: rotateX(0deg); opacity: 1; }
+  }
+
+  /* Scan & Pair QR Box Card inside Card */
+  .qr-pairing-box {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.2rem 1.6rem;
+    background: rgba(241, 128, 41, 0.08);
+    border: 1px solid rgba(241, 128, 41, 0.25);
+    border-radius: 24px;
+  }
+
+  .qr-matrix {
+    width: 80px;
+    height: 80px;
+    background: var(--white);
+    border-radius: 14px;
+    padding: 6px;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+  }
+
+  .qr-matrix svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .qr-details h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.25rem;
+  }
+
+  .qr-details p {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .meta-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  }
+
+  .device-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+
+  .device-meta b {
+    color: #e2e8f0;
+    font-weight: 700;
+  }
+
+  /* TV Footer */
+  footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    font-size: 1.05rem;
+    color: var(--muted);
+  }
+
+  .footer-domain {
+    color: var(--orange);
+    font-weight: 700;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 1024px) {
+    main {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+    .right-content {
+      justify-content: center;
+    }
+    .glass-card {
+      max-width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <a href="../../index.html" style="position:fixed;top:16px;left:16px;z-index:100;color:#fff;opacity:0.6;text-decoration:none;font-size:14px;font-weight:600;font-family:var(--font-main);">&larr; Back to menu</a>
+
+  <!-- Dynamic Canvas Background -->
+  <canvas id="bg-canvas"></canvas>
+  
+  <!-- Glowing Ambient Background Orbs -->
+  <div class="aurora aurora-1"></div>
+  <div class="aurora aurora-2"></div>
+
+  <!-- TV Viewport -->
+  <div class="tv-viewport" id="viewport">
+    
+    <!-- TV Header -->
+    <header>
+      <div class="brand-logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </div>
+        <div class="logo-text"><em>NTV</em><b>360</b></div>
+      </div>
+
+      <div class="header-right">
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          <span>Online — Awaiting Pairing</span>
+        </div>
+        <div class="live-clock" id="clock-display">--:-- --</div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Left Column: Simple Setup Steps for TV Viewing -->
+      <div class="left-content">
+        <div>
+          <span class="eyebrow-tag">Screen Setup</span>
+        </div>
+
+        <h1>Pair this display to <span>NTV360</span>.</h1>
+
+        <div class="steps-list">
+          <div class="step-item">
+            <span class="step-number">1</span>
+            <div class="step-text">Visit <b>dashboard.ntv360.com</b></div>
+          </div>
+          <div class="step-item">
+            <span class="step-number">2</span>
+            <div class="step-text">Go to <b>Screens</b> → <b>Add a Display</b></div>
+          </div>
+          <div class="step-item">
+            <span class="step-number">3</span>
+            <div class="step-text">Enter the 6-digit code shown on the right</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: High Visibility PIN Card -->
+      <div class="right-content">
+        <div class="glass-card">
+          
+          <div class="card-top">
+            <span class="card-label">Pairing Code</span>
+
+            <div class="refresh-widget">
+              <svg class="timer-svg" viewBox="0 0 24 24">
+                <circle class="timer-circle-bg" cx="12" cy="12" r="9"/>
+                <circle class="timer-circle-progress" id="timer-progress" cx="12" cy="12" r="9"/>
+              </svg>
+              <span class="timer-text" id="timer-text">05:00</span>
+            </div>
+          </div>
+
+          <!-- 6-Digit Pairing PIN Code -->
+          <div class="code-row" id="code-row">
+            <!-- Generated via JS -->
+          </div>
+
+          <!-- Instant Phone QR Scan Card -->
+          <div class="qr-pairing-box">
+            <div class="qr-matrix" id="qr-code-container">
+              <!-- Rendered via JS -->
+            </div>
+            <div class="qr-details">
+              <h3>Scan with Mobile Phone</h3>
+              <p>Point phone camera to pair instantly without typing</p>
+            </div>
+          </div>
+
+          <div class="meta-divider"></div>
+
+          <!-- Device Information -->
+          <div class="device-meta">
+            <span>Display: <b>Lobby Main Player</b></span>
+            <span>ID: <b>NTV-360-8849</b></span>
+            <span>Status: <b style="color: #4ade80;">4K UHD • Active</b></span>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- TV Footer -->
+    <footer>
+      <div>
+        <span>Control & schedule screens at </span>
+        <span class="footer-domain">dashboard.ntv360.com</span>
+      </div>
+
+      <div id="full-date">Thursday, July 30, 2026</div>
+    </footer>
+
+  </div>
+
+<script>
+  // Pairing PIN State
+  let pairingCode = "GCZX4Y";
+  const TOTAL_SECONDS = 300; // 5 minute rotation
+  let remainingSeconds = TOTAL_SECONDS;
+  let timerInterval = null;
+
+  // Render 6-digit PIN boxes with smooth flip transition
+  function renderCode(code, animate = false) {
+    pairingCode = code;
+    const container = document.getElementById('code-row');
+    container.innerHTML = '';
+    
+    code.split('').forEach((ch, idx) => {
+      const cell = document.createElement('div');
+      cell.className = 'code-digit' + (animate ? ' flip' : '');
+      cell.style.animationDelay = `${idx * 0.06}s`;
+      cell.textContent = ch;
+      container.appendChild(cell);
+    });
+
+    renderQRCode(`https://dashboard.ntv360.com/pair?code=${code}`);
+  }
+
+  // Generate 6-char alphanumeric code
+  function generateRandomCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let result = '';
+    for (let i = 0; i < 6; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  // Auto-refresh countdown timer
+  function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    remainingSeconds = TOTAL_SECONDS;
+
+    const progressCircle = document.getElementById('timer-progress');
+    const timerText = document.getElementById('timer-text');
+    const perimeter = 56.5;
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(remainingSeconds / 60);
+      const secs = remainingSeconds % 60;
+      timerText.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+      const fraction = remainingSeconds / TOTAL_SECONDS;
+      const offset = perimeter * (1 - fraction);
+      progressCircle.style.strokeDashoffset = offset;
+
+      if (remainingSeconds <= 0) {
+        renderCode(generateRandomCode(), true);
+        remainingSeconds = TOTAL_SECONDS;
+      } else {
+        remainingSeconds--;
+      }
+    }
+
+    updateTimerDisplay();
+    timerInterval = setInterval(updateTimerDisplay, 1000);
+  }
+
+  // Real-Time Clock & Date
+  function updateClock() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    
+    document.getElementById('clock-display').textContent = timeStr;
+    document.getElementById('full-date').textContent = dateStr;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Pure SVG QR Code Generator Matrix
+  function renderQRCode(url) {
+    const qrContainer = document.getElementById('qr-code-container');
+    let hash = 0;
+    for (let i = 0; i < url.length; i++) hash = ((hash << 5) - hash) + url.charCodeAt(i);
+
+    const size = 15;
+    let rects = '';
+    
+    function isCorner(r, c) {
+      return (r < 4 && c < 4) || (r < 4 && c >= size - 4) || (r >= size - 4 && c < 4);
+    }
+
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (isCorner(r, c)) continue;
+        const val = Math.abs(Math.sin(hash + r * 17 + c * 31));
+        if (val > 0.45) {
+          rects += `<rect x="${c}" y="${r}" width="0.88" height="0.88" rx="0.2" fill="#030712" />`;
+        }
+      }
+    }
+
+    const finder = (x, y) => `
+      <rect x="${x}" y="${y}" width="4" height="4" fill="none" stroke="#030712" stroke-width="0.8" rx="0.5"/>
+      <rect x="${x + 1}" y="${y + 1}" width="2" height="2" fill="#030712" rx="0.3"/>
+    `;
+
+    qrContainer.innerHTML = `
+      <svg viewBox="0 0 ${size} ${size}">
+        ${finder(0, 0)}
+        ${finder(size - 4, 0)}
+        ${finder(0, size - 4)}
+        ${rects}
+      </svg>
+    `;
+  }
+
+  // Floating Ambient Canvas Particles
+  function initParticleCanvas() {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const particles = [];
+    const count = 40;
+
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        radius: Math.random() * 2 + 1,
+        alpha: Math.random() * 0.4 + 0.2
+      });
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < count; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(241, 128, 41, ${p.alpha})`;
+        ctx.fill();
+
+        for (let j = i + 1; j < count; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 140) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(241, 128, 41, ${0.12 * (1 - dist / 140)})`;
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+  }
+
+  // OLED Screen Burn-in Protection (Subtle 15-second Position Drift)
+  function initBurnInProtection() {
+    const viewport = document.getElementById('viewport');
+    let step = 0;
+
+    setInterval(() => {
+      step = (step + 1) % 4;
+      const offsets = [
+        'translate(0px, 0px)',
+        'translate(4px, -3px)',
+        'translate(-3px, 4px)',
+        'translate(-4px, -2px)'
+      ];
+      viewport.style.transform = offsets[step];
+    }, 15000);
+  }
+
+  // Initial Load
+  renderCode(pairingCode);
+  startTimer();
+  initParticleCanvas();
+  initBurnInProtection();
+</script>
+</body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>NTV360 Player — Executive Dark TV Screensaver</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #060911;
+    --card-slate: rgba(13, 20, 34, 0.75);
+    --border-slate: rgba(255, 255, 255, 0.12);
+    --red: #ef060f;
+    --orange: #f18029;
+    --white: #ffffff;
+    --muted: #94a3b8;
+    --brand-gradient: linear-gradient(135deg, var(--red) 0%, var(--orange) 100%);
+    --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    background-color: var(--bg-dark);
+    color: var(--white);
+    font-family: var(--font-sans);
+    overflow: hidden;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Dynamic Wave Canvas Background */
+  #wave-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Ambient Backlight Glow */
+  .glow-center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, rgba(241, 128, 41, 0.18) 0%, rgba(239, 6, 15, 0.05) 50%, transparent 75%);
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+    animation: pulseBacklight 10s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulseBacklight {
+    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0.85; transform: translate(-50%, -50%) scale(1.12); }
+  }
+
+  /* TV Viewport Container */
+  .tv-container {
+    position: relative;
+    z-index: 10;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(2.5rem, 5vh, 4rem) clamp(3.5rem, 6vw, 6rem);
+    transition: transform 15s ease-in-out;
+  }
+
+  /* TV Header */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .brand-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: var(--brand-gradient);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 25px rgba(241, 128, 41, 0.4);
+  }
+
+  .brand-logo svg {
+    width: 26px;
+    height: 26px;
+    fill: white;
+  }
+
+  .brand-text {
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .brand-text span {
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-slate);
+    backdrop-filter: blur(20px);
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+
+  .status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 12px var(--orange);
+    animation: beacon 2s infinite ease-in-out;
+  }
+
+  @keyframes beacon {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.3); }
+  }
+
+  .clock-display {
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  /* Minimal Centered Hero Card */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+    gap: 1.8rem;
+  }
+
+  .headline-group h1 {
+    font-size: clamp(2.5rem, 4.5vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+  }
+
+  .headline-group p {
+    font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .headline-group p b {
+    color: var(--orange);
+    font-weight: 700;
+  }
+
+  /* Sleek Glass PIN Card */
+  .hero-card {
+    width: 100%;
+    background: var(--card-slate);
+    border: 1px solid var(--border-slate);
+    backdrop-filter: blur(36px);
+    -webkit-backdrop-filter: blur(36px);
+    border-radius: 40px;
+    padding: clamp(2.2rem, 4.5vw, 3.5rem);
+    box-shadow: 0 50px 120px -20px rgba(0, 0, 0, 0.85),
+                0 0 90px -20px rgba(241, 128, 41, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 2.2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--orange), var(--red), transparent);
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-label {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  .hud-timer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 0.45rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .timer-svg {
+    width: 20px;
+    height: 20px;
+    transform: rotate(-90deg);
+  }
+
+  .timer-bg {
+    stroke: rgba(255, 255, 255, 0.15);
+    stroke-width: 3;
+    fill: none;
+  }
+
+  .timer-progress {
+    stroke: var(--orange);
+    stroke-width: 3;
+    fill: none;
+    stroke-dasharray: 56.5;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear;
+  }
+
+  .timer-val {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  /* Giant PIN Code Digits */
+  .code-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: clamp(0.6rem, 1.5vw, 1.2rem);
+  }
+
+  .digit-cell {
+    aspect-ratio: 0.85;
+    background: linear-gradient(180deg, rgba(16, 32, 52, 0.95) 0%, rgba(3, 11, 20, 0.98) 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.16);
+    border-bottom: 5px solid var(--orange);
+    border-radius: 22px;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+    color: var(--white);
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.7);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .digit-cell.flip {
+    animation: flipDigit 0.5s ease-out;
+  }
+
+  @keyframes flipDigit {
+    0% { transform: rotateX(0deg); opacity: 1; }
+    50% { transform: rotateX(90deg); opacity: 0.3; }
+    100% { transform: rotateX(0deg); opacity: 1; }
+  }
+
+  /* Horizontal Sub Footer Bar inside Card */
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .qr-scanner-group {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    text-align: left;
+  }
+
+  .qr-box {
+    width: 68px;
+    height: 68px;
+    background: var(--white);
+    border-radius: 14px;
+    padding: 5px;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+  }
+
+  .qr-box svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .qr-info h4 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .qr-info p {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .device-meta {
+    font-size: 0.95rem;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .device-meta b {
+    color: #e2e8f0;
+  }
+
+  /* Footer Bar */
+  footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    font-size: 1.05rem;
+    color: var(--muted);
+  }
+
+  footer span b {
+    color: var(--orange);
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+  <a href="../../index.html" style="position:fixed;top:16px;left:16px;z-index:100;color:#fff;opacity:0.6;text-decoration:none;font-size:14px;font-weight:600;font-family:var(--font-sans);">&larr; Back to menu</a>
+
+  <!-- Dynamic Wave Canvas -->
+  <canvas id="wave-canvas"></canvas>
+
+  <!-- Glow Backdrop -->
+  <div class="glow-center"></div>
+
+  <!-- TV Viewport -->
+  <div class="tv-container" id="viewport">
+    
+    <!-- TV Header -->
+    <header>
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </div>
+        <div class="brand-text"><span>NTV</span>360</div>
+      </div>
+
+      <div class="header-meta">
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          <span>Online — Standby</span>
+        </div>
+        <div class="clock-display" id="clock-display">00:00 AM</div>
+      </div>
+    </header>
+
+    <!-- Minimal Centered Main Focal Card -->
+    <main>
+      <div class="headline-group">
+        <h1>Pair This Display</h1>
+        <p>Visit <b>dashboard.ntv360.com</b> or scan QR code below</p>
+      </div>
+
+      <div class="hero-card">
+        <div class="card-top">
+          <span class="card-label">Pairing Code</span>
+
+          <div class="hud-timer">
+            <svg class="timer-svg" viewBox="0 0 24 24">
+              <circle class="timer-bg" cx="12" cy="12" r="9"/>
+              <circle class="timer-progress" id="timer-progress" cx="12" cy="12" r="9"/>
+            </svg>
+            <span class="timer-val" id="timer-val">05:00</span>
+          </div>
+        </div>
+
+        <!-- 6-Digit PIN Code -->
+        <div class="code-row" id="code-row">
+          <!-- Rendered via JS -->
+        </div>
+
+        <div class="card-footer">
+          <div class="qr-scanner-group">
+            <div class="qr-box" id="qr-box">
+              <!-- Rendered via JS -->
+            </div>
+            <div class="qr-info">
+              <h4>Scan with Phone</h4>
+              <p>Point camera to pair instantly</p>
+            </div>
+          </div>
+
+          <div class="device-meta">
+            <div>Display: <b>Lobby Main TV</b></div>
+            <div>ID: <b>NTV-360-8849</b></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer Bar -->
+    <footer>
+      <div>Manage displays at <b>dashboard.ntv360.com</b></div>
+      <div id="full-date">Thursday, July 30, 2026</div>
+    </footer>
+
+  </div>
+
+<script>
+  let currentPIN = "GCZX4Y";
+  const TOTAL_SECONDS = 300;
+  let remainingSeconds = TOTAL_SECONDS;
+  let timerInterval = null;
+
+  function renderCode(code, animate = false) {
+    currentPIN = code;
+    const container = document.getElementById('code-row');
+    container.innerHTML = '';
+
+    code.split('').forEach((ch, idx) => {
+      const cell = document.createElement('div');
+      cell.className = 'digit-cell' + (animate ? ' flip' : '');
+      cell.style.animationDelay = `${idx * 0.06}s`;
+      cell.textContent = ch;
+      container.appendChild(cell);
+    });
+
+    renderQRCode(`https://dashboard.ntv360.com/pair?code=${code}`);
+  }
+
+  function randomCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let result = '';
+    for (let i = 0; i < 6; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    remainingSeconds = TOTAL_SECONDS;
+
+    const progressCircle = document.getElementById('timer-progress');
+    const label = document.getElementById('timer-val');
+    const perimeter = 56.5;
+
+    function updateTimer() {
+      const mins = Math.floor(remainingSeconds / 60);
+      const secs = remainingSeconds % 60;
+      label.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+      const fraction = remainingSeconds / TOTAL_SECONDS;
+      const offset = perimeter * (1 - fraction);
+      progressCircle.style.strokeDashoffset = offset;
+
+      if (remainingSeconds <= 0) {
+        renderCode(randomCode(), true);
+        remainingSeconds = TOTAL_SECONDS;
+      } else {
+        remainingSeconds--;
+      }
+    }
+
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 1000);
+  }
+
+  function updateClock() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    document.getElementById('clock-display').textContent = timeStr;
+    document.getElementById('full-date').textContent = dateStr;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  function renderQRCode(url) {
+    const qrBox = document.getElementById('qr-box');
+    let hash = 0;
+    for (let i = 0; i < url.length; i++) hash = ((hash << 5) - hash) + url.charCodeAt(i);
+
+    const size = 15;
+    let rects = '';
+    
+    function isCorner(r, c) {
+      return (r < 4 && c < 4) || (r < 4 && c >= size - 4) || (r >= size - 4 && c < 4);
+    }
+
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (isCorner(r, c)) continue;
+        const val = Math.abs(Math.sin(hash + r * 17 + c * 31));
+        if (val > 0.45) {
+          rects += `<rect x="${c}" y="${r}" width="0.88" height="0.88" rx="0.2" fill="#060911" />`;
+        }
+      }
+    }
+
+    const finder = (x, y) => `
+      <rect x="${x}" y="${y}" width="4" height="4" fill="none" stroke="#060911" stroke-width="0.8" rx="0.5"/>
+      <rect x="${x + 1}" y="${y + 1}" width="2" height="2" fill="#060911" rx="0.3"/>
+    `;
+
+    qrBox.innerHTML = `
+      <svg viewBox="0 0 ${size} ${size}">
+        ${finder(0, 0)}
+        ${finder(size - 4, 0)}
+        ${finder(0, size - 4)}
+        ${rects}
+      </svg>
+    `;
+  }
+
+  function initWaveCanvas() {
+    const canvas = document.getElementById('wave-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    let step = 0;
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      step += 0.006;
+
+      const waves = [
+        { color: 'rgba(239, 6, 15, 0.08)', length: 0.003, amplitude: 80, speed: 0.008 },
+        { color: 'rgba(241, 128, 41, 0.1)', length: 0.002, amplitude: 100, speed: 0.006 }
+      ];
+
+      waves.forEach((w) => {
+        ctx.beginPath();
+        ctx.moveTo(0, height * 0.6);
+
+        for (let x = 0; x < width; x += 5) {
+          const y = height * 0.55 + Math.sin(x * w.length + step * w.speed * 50) * w.amplitude;
+          ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.fillStyle = w.color;
+        ctx.fill();
+      });
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+  }
+
+  function initBurnInProtection() {
+    const viewport = document.getElementById('viewport');
+    let step = 0;
+
+    setInterval(() => {
+      step = (step + 1) % 4;
+      const offsets = [
+        'translate(0px, 0px)',
+        'translate(4px, -3px)',
+        'translate(-3px, 4px)',
+        'translate(-4px, -2px)'
+      ];
+      viewport.style.transform = offsets[step];
+    }, 15000);
+  }
+
+  renderCode(currentPIN);
+  startTimer();
+  initWaveCanvas();
+  initBurnInProtection();
+</script>
+</body>
+</html>

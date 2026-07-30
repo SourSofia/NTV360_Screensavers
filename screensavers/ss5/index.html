@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>NTV 360 — Ribbon Poster</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; }
+  body { background:#FDFDFD; font-family:'Plus Jakarta Sans',system-ui,sans-serif; overflow:hidden; }
+  a { color:#F18029; text-decoration:none; }
+  a:hover { color:#EF060F; }
+  @keyframes ntvPulse { 0%,100%{opacity:.3} 50%{opacity:1} }
+
+  .back-link {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 100;
+    color: #00263E;
+    opacity: 0.55;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: opacity 0.2s ease;
+  }
+  .back-link:hover { opacity: 1; }
+
+  /* Fluid poster — every size below is clamp()'d against viewport height/width
+     so it fills any screen naturally with no scaling or letterboxing. At a
+     1920x1080 TV the clamp maxes are what the design was authored at. */
+  .poster {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #FDFDFD;
+  }
+
+  .top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: clamp(6px, 1.3vh, 14px);
+    background: linear-gradient(45deg, #A00558 0%, #EF060F 50%, #F18029 100%);
+  }
+
+  .diagonal-1 {
+    position: absolute;
+    right: -18.75vw;
+    top: -24vh;
+    width: 60.4vw;
+    height: 48.1vh;
+    transform: rotate(-45deg);
+    background: linear-gradient(45deg, #A00558, #EF060F);
+    opacity: .1;
+  }
+
+  .diagonal-2 {
+    position: absolute;
+    right: -15.6vw;
+    top: 7.4vh;
+    width: 60.4vw;
+    height: 16.7vh;
+    transform: rotate(-45deg);
+    background: #F18029;
+    opacity: .12;
+  }
+
+  .diagonal-3 {
+    position: absolute;
+    left: -12.5vw;
+    bottom: -27.8vh;
+    width: 46.9vw;
+    height: 38.9vh;
+    transform: rotate(-45deg);
+    background: linear-gradient(45deg, #00263E, #A00558);
+    opacity: .07;
+  }
+
+  .content {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: clamp(24px, 5.2vh, 56px) clamp(32px, 4.6vw, 88px) clamp(20px, 4.4vh, 48px);
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 2.6vh, 28px);
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: clamp(7px, 1.1vh, 12px);
+    color: #00263E;
+    font-size: clamp(14px, 2.1vh, 23px);
+    font-weight: 700;
+  }
+
+  .status__dot {
+    width: clamp(7px, 1vh, 11px);
+    height: clamp(7px, 1vh, 11px);
+    border-radius: 50%;
+    background: #F18029;
+    animation: ntvPulse 2.4s ease-in-out infinite;
+  }
+
+  .header-divider {
+    height: clamp(16px, 2.4vh, 26px);
+    width: 1px;
+    background: #CCCCCC;
+  }
+
+  .clock {
+    color: #00263E;
+    font-size: clamp(18px, 2.8vh, 30px);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 5vw, 96px);
+    align-items: center;
+  }
+
+  .left-col {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 3.3vh, 36px);
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 1.5vh, 16px);
+  }
+
+  .eyebrow__bar {
+    width: clamp(30px, 2.9vw, 56px);
+    height: clamp(3px, 0.46vh, 5px);
+    background: linear-gradient(45deg, #A00558, #F18029);
+  }
+
+  .eyebrow__text {
+    color: #EF060F;
+    font-size: clamp(13px, 1.9vh, 21px);
+    font-weight: 800;
+    letter-spacing: .3em;
+  }
+
+  .headline {
+    font-size: clamp(44px, 10.2vh, 110px);
+    line-height: .94;
+    font-weight: 800;
+    letter-spacing: -.035em;
+    color: #00263E;
+  }
+
+  .headline em {
+    font-style: normal;
+    background: linear-gradient(45deg, #A00558 0%, #EF060F 45%, #F18029 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    border-top: clamp(1px, 0.19vh, 2px) solid #00263E;
+  }
+
+  .step {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(12px, 2.2vh, 24px);
+    padding: clamp(10px, 2vh, 22px) clamp(2px, 0.4vh, 4px);
+    border-bottom: 1px solid #CCCCCC;
+  }
+
+  .step__num {
+    color: #F18029;
+    font-size: clamp(14px, 2.2vh, 24px);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .step__text {
+    color: #231F20;
+    font-size: clamp(16px, 2.7vh, 29px);
+    font-weight: 600;
+  }
+
+  .step__text strong {
+    color: #EF060F;
+    font-weight: 800;
+  }
+
+  .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(14px, 2.6vh, 28px);
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .code-header__label {
+    color: #00263E;
+    font-size: clamp(13px, 1.9vh, 21px);
+    font-weight: 800;
+    letter-spacing: .3em;
+  }
+
+  .code-header__expires {
+    color: #898C8D;
+    font-size: clamp(13px, 2vh, 22px);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .code-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(8px, 1.5vh, 16px);
+  }
+
+  .code-tile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: clamp(80px, 20vh, 216px);
+    color: #FDFDFD;
+    font-size: clamp(48px, 12.2vh, 132px);
+    font-weight: 800;
+    line-height: 1;
+    background: #00263E;
+    overflow: hidden;
+  }
+
+  /* Shine sweep, staggered per tile so it travels left-to-right across
+     the whole code rather than flashing all six tiles at once. */
+  .code-tile::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 60%;
+    background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%);
+    transform: translateX(-150%) skewX(-20deg);
+    animation: tile-shine 4.2s ease-in-out infinite;
+  }
+
+  .code-tile:nth-child(1)::after { animation-delay: 0s; }
+  .code-tile:nth-child(2)::after { animation-delay: .3s; }
+  .code-tile:nth-child(3)::after { animation-delay: .6s; }
+  .code-tile:nth-child(4)::after { animation-delay: .9s; }
+  .code-tile:nth-child(5)::after { animation-delay: 1.2s; }
+  .code-tile:nth-child(6)::after { animation-delay: 1.5s; }
+
+  @keyframes tile-shine {
+    0% { transform: translateX(-150%) skewX(-20deg); }
+    12% { transform: translateX(250%) skewX(-20deg); }
+    100% { transform: translateX(250%) skewX(-20deg); }
+  }
+
+  .code-tile--last {
+    background: linear-gradient(45deg, #A00558, #EF060F 50%, #F18029);
+  }
+
+  .qr-row {
+    display: flex;
+    align-items: center;
+    gap: clamp(14px, 2.4vh, 26px);
+    padding: clamp(14px, 2.4vh, 26px) clamp(16px, 2.8vw, 30px);
+    background: #F5F5F5;
+    border-left: clamp(3px, 0.56vh, 6px) solid #F18029;
+  }
+
+  .qr-row__box {
+    width: clamp(56px, 10.4vh, 112px);
+    height: clamp(56px, 10.4vh, 112px);
+    padding: clamp(4px, 0.75vh, 8px);
+    background: #FDFDFD;
+    border: 1px solid #CCCCCC;
+    flex-shrink: 0;
+  }
+
+  .qr-row__box svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .qr-row__text {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(3px, 0.56vh, 6px);
+  }
+
+  .qr-row__title {
+    color: #00263E;
+    font-size: clamp(15px, 2.4vh, 26px);
+    font-weight: 800;
+  }
+
+  .qr-row__desc {
+    color: #231F20;
+    font-size: clamp(13px, 2vh, 22px);
+    font-weight: 500;
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: clamp(1px, 0.19vh, 2px) solid #00263E;
+    padding-top: clamp(8px, 1.5vh, 16px);
+  }
+
+  .footer-logo {
+    display: block;
+    height: clamp(48px, 8.3vh, 90px);
+    width: auto;
+  }
+
+  .footer-right {
+    display: flex;
+    align-items: center;
+    gap: clamp(14px, 2.6vh, 28px);
+  }
+
+  .footer-right__tag {
+    color: #EF060F;
+    font-size: clamp(13px, 2vh, 22px);
+    font-weight: 800;
+    letter-spacing: .24em;
+  }
+
+  .footer-right__date {
+    color: #898C8D;
+    font-size: clamp(13px, 2vh, 22px);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../../index.html">&larr; Back to menu</a>
+
+  <div class="poster">
+    <div class="top-bar"></div>
+    <div class="diagonal-1"></div>
+    <div class="diagonal-2"></div>
+    <div class="diagonal-3"></div>
+
+    <div class="content">
+      <div class="header">
+        <div class="header-right">
+          <div class="status">
+            <span class="status__dot"></span>Online &mdash; awaiting pairing
+          </div>
+          <div class="header-divider"></div>
+          <div class="clock" id="clock">--:-- --</div>
+        </div>
+      </div>
+
+      <div class="main">
+        <div class="left-col">
+          <div class="eyebrow">
+            <span class="eyebrow__bar"></span>
+            <span class="eyebrow__text">SCREEN SETUP</span>
+          </div>
+          <div class="headline">PAIR THIS<br>DISPLAY TO<br><em>NTV360.</em></div>
+          <div class="steps">
+            <div class="step">
+              <span class="step__num">01</span>
+              <span class="step__text">Visit <strong>dashboard.ntv360.com</strong></span>
+            </div>
+            <div class="step">
+              <span class="step__num">02</span>
+              <span class="step__text">Go to <strong>Screens &rarr; Add a display</strong></span>
+            </div>
+            <div class="step">
+              <span class="step__num">03</span>
+              <span class="step__text">Enter the six-character code</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-col">
+          <div class="code-header">
+            <span class="code-header__label">PAIRING CODE</span>
+            <span class="code-header__expires">Expires in <span id="timer">5:00</span></span>
+          </div>
+          <div class="code-grid" id="code-grid"></div>
+          <div class="qr-row">
+            <div class="qr-row__box" id="qr-box"></div>
+            <div class="qr-row__text">
+              <span class="qr-row__title">Scan with your phone</span>
+              <span class="qr-row__desc">Point the camera here to pair without typing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <img class="footer-logo" src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" />
+        <div class="footer-right">
+          <span class="footer-right__tag">WATCH US</span>
+          <span class="footer-right__date" id="today">&nbsp;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

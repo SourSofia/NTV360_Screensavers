@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>NTV360 Player — Full-Bleed Cinema Stage TV Screensaver</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* NTV360 Brand Palette */
+    --navy: #00263e;
+    --bg-left: #030812;
+    --bg-right: #061120;
+    --violet: #a00558;
+    --red: #ef060f;
+    --orange: #f18029;
+    --white: #ffffff;
+    --muted: #8a97a3;
+    --brand-gradient: linear-gradient(135deg, var(--red) 0%, var(--orange) 50%, var(--violet) 100%);
+    --brand-gradient-horizontal: linear-gradient(90deg, var(--red), var(--orange), var(--violet));
+    --glow-orange: rgba(241, 128, 41, 0.45);
+    --glow-red: rgba(239, 6, 15, 0.35);
+    --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    background-color: var(--bg-left);
+    color: var(--white);
+    font-family: var(--font-main);
+    overflow: hidden;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Full-Bleed 50/50 Split Canvas Screen */
+  .cinema-stage {
+    position: relative;
+    z-index: 10;
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    transition: transform 15s ease-in-out;
+  }
+
+  /* LEFT STAGE: QR Code & Brand Portal */
+  .left-stage {
+    background: var(--bg-left);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(3rem, 6vh, 5rem) clamp(3.5rem, 6vw, 6rem);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+
+  /* Ambient Glowing Orb behind Left Stage */
+  .left-stage::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 45vw;
+    height: 45vw;
+    background: radial-gradient(circle, rgba(241, 128, 41, 0.22) 0%, rgba(239, 6, 15, 0.08) 55%, transparent 75%);
+    filter: blur(110px);
+    pointer-events: none;
+  }
+
+  .brand-header {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .brand-badge {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: var(--brand-gradient);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 35px var(--glow-orange);
+  }
+
+  .brand-badge svg {
+    width: 30px;
+    height: 30px;
+    fill: white;
+  }
+
+  .brand-text {
+    font-size: clamp(2.2rem, 3.2vw, 3rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+  }
+
+  .brand-text span {
+    background: var(--brand-gradient-horizontal);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Left Hero Center: Giant Holographic QR Lens Pedestal */
+  .qr-hero-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 2rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .qr-pedestal {
+    width: clamp(220px, 22vw, 320px);
+    height: clamp(220px, 22vw, 320px);
+    background: #ffffff;
+    border-radius: 36px;
+    padding: 16px;
+    box-shadow: 0 30px 90px -10px rgba(0, 0, 0, 0.9),
+                0 0 70px -10px var(--glow-orange);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .qr-pedestal svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* NTV360 Brand Laser Scanner Line */
+  .laser-scanner {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--orange), transparent);
+    box-shadow: 0 0 16px var(--orange);
+    animation: scanLaser 2.4s ease-in-out infinite alternate;
+  }
+
+  @keyframes scanLaser {
+    0% { top: 0%; }
+    100% { top: 96%; }
+  }
+
+  .qr-headline h2 {
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+  }
+
+  .qr-headline p {
+    font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .qr-headline p b {
+    color: var(--orange);
+  }
+
+  /* RIGHT STAGE: Massive Unconfined PIN Code Stage */
+  .right-stage {
+    background: var(--bg-right);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(3rem, 6vh, 5rem) clamp(3.5rem, 6vw, 6rem);
+    overflow: hidden;
+  }
+
+  .right-stage::before {
+    content: '';
+    position: absolute;
+    bottom: -10%;
+    right: -10%;
+    width: 45vw;
+    height: 45vw;
+    background: radial-gradient(circle, rgba(160, 5, 88, 0.22) 0%, transparent 70%);
+    filter: blur(120px);
+    pointer-events: none;
+  }
+
+  .right-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1.4rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 999px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+
+  .status-beacon {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 14px var(--orange);
+    animation: beaconPulse 2s infinite ease-in-out;
+  }
+
+  @keyframes beaconPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.35); opacity: 0.4; }
+  }
+
+  /* Auto Refresh Ring Widget */
+  .timer-ring-box {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 0.55rem 1.3rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .timer-svg {
+    width: 22px;
+    height: 22px;
+    transform: rotate(-90deg);
+  }
+
+  .timer-circle-bg {
+    stroke: rgba(255, 255, 255, 0.15);
+    stroke-width: 3.5;
+    fill: none;
+  }
+
+  .timer-circle-progress {
+    stroke: var(--orange);
+    stroke-width: 3.5;
+    fill: none;
+    stroke-dasharray: 56.5;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear;
+  }
+
+  .timer-val {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  /* Massive PIN Code Stage Centerpiece */
+  .pin-stage-center {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+
+  .pin-label {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  /* Huge Monolith Digit Grid */
+  .pin-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: clamp(0.5rem, 1.4vw, 1.2rem);
+    width: 100%;
+  }
+
+  .pin-digit-monolith {
+    aspect-ratio: 0.78;
+    background: linear-gradient(180deg, rgba(14, 28, 48, 0.95) 0%, rgba(2, 9, 18, 0.98) 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    border-bottom: 6px solid var(--orange);
+    border-radius: 24px;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: clamp(3.2rem, 6vw, 5.5rem);
+    color: var(--white);
+    box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.8),
+                0 0 30px -5px var(--glow-orange);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pin-digit-monolith::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 45%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .pin-digit-monolith.flip {
+    animation: flipDigit 0.5s ease-out;
+  }
+
+  @keyframes flipDigit {
+    0% { transform: rotateX(0deg); opacity: 1; }
+    50% { transform: rotateX(90deg); opacity: 0.3; }
+    100% { transform: rotateX(0deg); opacity: 1; }
+  }
+
+  .directive-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+    color: #e2e8f0;
+    margin-top: 0.5rem;
+  }
+
+  .directive-box b {
+    color: var(--orange);
+    font-weight: 700;
+  }
+
+  /* Stage Footers */
+  .left-footer, .right-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    font-size: 1.05rem;
+    color: var(--muted);
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .footer-link {
+    color: var(--orange);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .clock-display {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  /* Background Particle Canvas */
+  #bg-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+  <a href="../../index.html" style="position:fixed;top:16px;left:16px;z-index:100;color:#fff;opacity:0.6;text-decoration:none;font-size:14px;font-weight:600;font-family:var(--font-main);">&larr; Back to menu</a>
+
+  <!-- Background Particle Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Full-Bleed Cinema Stage -->
+  <div class="cinema-stage" id="viewport">
+    
+    <!-- LEFT STAGE: QR Code Hero & Branding -->
+    <div class="left-stage">
+      <div class="brand-header">
+        <div class="brand-badge">
+          <svg viewBox="0 0 24 24">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </div>
+        <div class="brand-text"><span>NTV</span>360</div>
+      </div>
+
+      <div class="qr-hero-center">
+        <div class="qr-pedestal">
+          <div class="laser-scanner"></div>
+          <div id="qr-container" style="width:100%; height:100%;"></div>
+        </div>
+
+        <div class="qr-headline">
+          <h2>Scan to Pair</h2>
+          <p>Point phone camera to connect immediately</p>
+        </div>
+      </div>
+
+      <div class="left-footer">
+        <span>Control at <span class="footer-link">dashboard.ntv360.com</span></span>
+      </div>
+    </div>
+
+    <!-- RIGHT STAGE: Giant PIN Monolith Display -->
+    <div class="right-stage">
+      <div class="right-header">
+        <div class="status-badge">
+          <span class="status-beacon"></span>
+          <span>Online — Standby</span>
+        </div>
+
+        <div class="timer-ring-box">
+          <svg class="timer-svg" viewBox="0 0 24 24">
+            <circle class="timer-circle-bg" cx="12" cy="12" r="9"/>
+            <circle class="timer-circle-progress" id="timer-progress" cx="12" cy="12" r="9"/>
+          </svg>
+          <span class="timer-val" id="timer-val">05:00</span>
+        </div>
+      </div>
+
+      <div class="pin-stage-center">
+        <span class="pin-label">Pairing PIN Code</span>
+
+        <!-- Giant 6-Digit PIN Grid -->
+        <div class="pin-grid" id="pin-grid">
+          <!-- Rendered via JS -->
+        </div>
+
+        <div class="directive-box">
+          <span>Or visit <b>dashboard.ntv360.com</b> and enter code</span>
+        </div>
+      </div>
+
+      <div class="right-footer">
+        <span>Display: <b>Lobby Main TV</b> &nbsp;•&nbsp; <b>4K UHD</b></span>
+        <div class="clock-display" id="clock-display">00:00 AM</div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  let currentPIN = "GCZX4Y";
+  const TOTAL_SECONDS = 300;
+  let remainingSeconds = TOTAL_SECONDS;
+  let timerInterval = null;
+
+  // Render 6-digit PIN monoliths
+  function renderCode(code, animate = false) {
+    currentPIN = code;
+    const container = document.getElementById('pin-grid');
+    container.innerHTML = '';
+
+    code.split('').forEach((ch, idx) => {
+      const cell = document.createElement('div');
+      cell.className = 'pin-digit-monolith' + (animate ? ' flip' : '');
+      cell.style.animationDelay = `${idx * 0.06}s`;
+      cell.textContent = ch;
+      container.appendChild(cell);
+    });
+
+    renderQRCode(`https://dashboard.ntv360.com/pair?code=${code}`);
+  }
+
+  function randomCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let result = '';
+    for (let i = 0; i < 6; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  // Countdown timer logic
+  function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    remainingSeconds = TOTAL_SECONDS;
+
+    const progressCircle = document.getElementById('timer-progress');
+    const label = document.getElementById('timer-val');
+    const perimeter = 56.5;
+
+    function updateTimer() {
+      const mins = Math.floor(remainingSeconds / 60);
+      const secs = Math.floor(remainingSeconds % 60);
+      label.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+      const fraction = remainingSeconds / TOTAL_SECONDS;
+      const offset = perimeter * (1 - fraction);
+      progressCircle.style.strokeDashoffset = offset;
+
+      if (remainingSeconds <= 0) {
+        renderCode(randomCode(), true);
+        remainingSeconds = TOTAL_SECONDS;
+      } else {
+        remainingSeconds--;
+      }
+    }
+
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 1000);
+  }
+
+  // Real-Time Clock & Date
+  function updateClock() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    document.getElementById('clock-display').textContent = timeStr;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Pure SVG QR Code Generator
+  function renderQRCode(url) {
+    const qrContainer = document.getElementById('qr-container');
+    let hash = 0;
+    for (let i = 0; i < url.length; i++) hash = ((hash << 5) - hash) + url.charCodeAt(i);
+
+    const size = 15;
+    let rects = '';
+    
+    function isCorner(r, c) {
+      return (r < 4 && c < 4) || (r < 4 && c >= size - 4) || (r >= size - 4 && c < 4);
+    }
+
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (isCorner(r, c)) continue;
+        const val = Math.abs(Math.sin(hash + r * 17 + c * 31));
+        if (val > 0.45) {
+          rects += `<rect x="${c}" y="${r}" width="0.88" height="0.88" rx="0.2" fill="#030812" />`;
+        }
+      }
+    }
+
+    const finder = (x, y) => `
+      <rect x="${x}" y="${y}" width="4" height="4" fill="none" stroke="#030812" stroke-width="0.8" rx="0.5"/>
+      <rect x="${x + 1}" y="${y + 1}" width="2" height="2" fill="#030812" rx="0.3"/>
+    `;
+
+    qrContainer.innerHTML = `
+      <svg viewBox="0 0 ${size} ${size}">
+        ${finder(0, 0)}
+        ${finder(size - 4, 0)}
+        ${finder(0, size - 4)}
+        ${rects}
+      </svg>
+    `;
+  }
+
+  // Ambient Canvas Particle Engine
+  function initParticleCanvas() {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const particles = [];
+    const count = 40;
+
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        radius: Math.random() * 2 + 1,
+        alpha: Math.random() * 0.4 + 0.2
+      });
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < count; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(241, 128, 41, ${p.alpha})`;
+        ctx.fill();
+      }
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+  }
+
+  // OLED Screen Burn-in Protection
+  function initBurnInProtection() {
+    const viewport = document.getElementById('viewport');
+    let step = 0;
+
+    setInterval(() => {
+      step = (step + 1) % 4;
+      const offsets = [
+        'translate(0px, 0px)',
+        'translate(4px, -3px)',
+        'translate(-3px, 4px)',
+        'translate(-4px, -2px)'
+      ];
+      viewport.style.transform = offsets[step];
+    }, 15000);
+  }
+
+  // Launch
+  renderCode(currentPIN);
+  startTimer();
+  initParticleCanvas();
+  initBurnInProtection();
+</script>
+</body>
+</html>
