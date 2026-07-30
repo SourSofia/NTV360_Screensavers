@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>NTV 360 — Framed Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #00263E; overflow: hidden; }
+  .back-link { position: fixed; top: 16px; left: 16px; z-index: 100; color: #FDFDFD; opacity: 0.55; text-decoration: none; font-size: 14px; font-weight: 600; }
+  .back-link:hover { opacity: 1; }
+  .canvas { position: absolute; top: 0; left: 0; width: 1280px; height: 720px; transform-origin: top left; }
+</style>
+</head>
+<body>
+<a class="back-link" href="../../index.html">&larr; Back to menu</a>
+<div class="canvas" id="canvas">
+  <div style="width: 1280px; height: 720px; background: #00263E; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+    <div style="position: absolute; inset: 28px; border: 1px solid rgba(253,253,253,0.16); border-radius: 20px;"></div>
+    <div style="width: 760px; padding: 56px 64px; border-radius: 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.14); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 26px; color: #FDFDFD;">
+      <img src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" style="height: 30px; width: auto;">
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: #F18029; font-weight: 700;">Screen setup</span>
+      <h1 style="margin: 0; font-size: 38px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15;">Enter this code in your NTV 360 dashboard</h1>
+
+      <div style="display: flex; gap: 10px;">
+        <div style="width: 64px; height: 80px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: 800;">4</div>
+        <div style="width: 64px; height: 80px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: 800;">R</div>
+        <div style="width: 64px; height: 80px; border-radius: 10px; background: linear-gradient(135deg, #A00558, #EF060F 55%, #F18029); display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: 800;">J</div>
+        <div style="width: 64px; height: 80px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: 800;">8</div>
+        <div style="width: 64px; height: 80px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: 800;">V</div>
+        <div style="width: 64px; height: 80px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: 800;">1</div>
+      </div>
+
+      <div style="width: 100%; height: 1px; background: rgba(255,255,255,0.14);"></div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 13px; color: rgba(253,253,253,0.6);">
+        <span>dashboard.ntv360.com &rarr; Screens &rarr; Add a display</span>
+        <span id="clock">5:51 PM</span>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function fitCanvas() {
+  var c = document.getElementById('canvas');
+  var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+  var l = (window.innerWidth - 1280 * s) / 2;
+  var t = (window.innerHeight - 720 * s) / 2;
+  c.style.transform = 'translate(' + l + 'px,' + t + 'px) scale(' + s + ')';
+}
+window.addEventListener('resize', fitCanvas);
+fitCanvas();
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+</body>
+</html>

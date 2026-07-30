@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>NTV 360 — Soft Light Hero</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #FDFDFD; overflow: hidden; }
+  .back-link { position: fixed; top: 16px; left: 16px; z-index: 100; color: #00263E; opacity: 0.55; text-decoration: none; font-size: 14px; font-weight: 600; }
+  .back-link:hover { opacity: 1; }
+  .canvas { position: absolute; top: 0; left: 0; width: 1280px; height: 720px; transform-origin: top left; }
+</style>
+</head>
+<body>
+<a class="back-link" href="../../index.html">&larr; Back to menu</a>
+<div class="canvas" id="canvas">
+  <div style="width: 1280px; height: 720px; background: radial-gradient(circle at 50% -10%, #FFF0EA 0%, #FDFDFD 55%); position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 30px;">
+    <img src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" style="height: 34px; width: auto; position: absolute; top: 44px; left: 50%; transform: translateX(-50%);">
+    <span style="position: absolute; top: 48px; right: 56px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #898C8D;" id="clock">5:51 PM</span>
+
+    <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.3em; text-transform: uppercase; color: #EF060F; font-weight: 700;">Set up this display</span>
+    <h1 style="margin: 0; font-size: 44px; font-weight: 800; color: #00263E; letter-spacing: -0.02em; max-width: 640px; line-height: 1.1;">
+      Enter your pairing code at
+      <span style="background: linear-gradient(100deg, #A00558, #EF060F 55%, #F18029); -webkit-background-clip: text; background-clip: text; color: transparent;">dashboard.ntv360.com</span>
+    </h1>
+
+    <div style="display: flex; gap: 12px; margin-top: 8px;">
+      <div style="width: 74px; height: 90px; border-radius: 14px; background: #FDFDFD; box-shadow: 0 10px 30px rgba(0,38,62,0.12); display: flex; align-items: center; justify-content: center; font-size: 50px; font-weight: 800; color: #00263E;">B</div>
+      <div style="width: 74px; height: 90px; border-radius: 14px; background: #FDFDFD; box-shadow: 0 10px 30px rgba(0,38,62,0.12); display: flex; align-items: center; justify-content: center; font-size: 50px; font-weight: 800; color: #00263E;">4</div>
+      <div style="width: 74px; height: 90px; border-radius: 14px; background: #FDFDFD; box-shadow: 0 10px 30px rgba(0,38,62,0.12); display: flex; align-items: center; justify-content: center; font-size: 50px; font-weight: 800; color: #00263E;">W</div>
+      <div style="width: 74px; height: 90px; border-radius: 14px; background: linear-gradient(135deg, #A00558, #EF060F 55%, #F18029); box-shadow: 0 10px 30px rgba(239,6,15,0.25); display: flex; align-items: center; justify-content: center; font-size: 50px; font-weight: 800; color: #FDFDFD;">Q</div>
+      <div style="width: 74px; height: 90px; border-radius: 14px; background: #FDFDFD; box-shadow: 0 10px 30px rgba(0,38,62,0.12); display: flex; align-items: center; justify-content: center; font-size: 50px; font-weight: 800; color: #00263E;">8</div>
+      <div style="width: 74px; height: 90px; border-radius: 14px; background: #FDFDFD; box-shadow: 0 10px 30px rgba(0,38,62,0.12); display: flex; align-items: center; justify-content: center; font-size: 50px; font-weight: 800; color: #00263E;">N</div>
+    </div>
+
+    <p style="margin: 0; font-size: 14px; color: #898C8D;">Screens &rarr; Add a display &middot; Code refreshes in 4:32</p>
+  </div>
+</div>
+<script>
+function fitCanvas() {
+  var c = document.getElementById('canvas');
+  var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+  var l = (window.innerWidth - 1280 * s) / 2;
+  var t = (window.innerHeight - 720 * s) / 2;
+  c.style.transform = 'translate(' + l + 'px,' + t + 'px) scale(' + s + ')';
+}
+window.addEventListener('resize', fitCanvas);
+fitCanvas();
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+</body>
+</html>

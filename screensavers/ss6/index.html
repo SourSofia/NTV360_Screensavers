@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>NTV 360 — Light Editorial</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #FDFDFD; overflow: hidden; }
+  .back-link { position: fixed; top: 16px; left: 16px; z-index: 100; color: #00263E; opacity: 0.55; text-decoration: none; font-size: 14px; font-weight: 600; }
+  .back-link:hover { opacity: 1; }
+  .canvas { position: absolute; top: 0; left: 0; width: 1280px; height: 720px; transform-origin: top left; }
+</style>
+</head>
+<body>
+<a class="back-link" href="../../index.html">&larr; Back to menu</a>
+<div class="canvas" id="canvas">
+  <div style="width: 1280px; height: 720px; background: #FDFDFD; position: relative; overflow: hidden; display: flex; flex-direction: column;">
+    <div style="height: 6px; background: linear-gradient(90deg, #A00558 0%, #EF060F 52%, #F18029 100%);"></div>
+    <div style="position: absolute; top: -140px; right: -120px; width: 620px; height: 620px; background: linear-gradient(135deg, rgba(160,5,88,0.07), rgba(241,128,41,0.07)); transform: rotate(20deg);"></div>
+
+    <div style="position: relative; flex: 1; padding: 44px 60px 40px; display: flex; flex-direction: column;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <img src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" style="height: 26px; width: auto;">
+        <div style="display: flex; align-items: center; gap: 18px; font-size: 14px; font-weight: 600; color: #00263E;">
+          <span style="display: flex; align-items: center; gap: 9px; color: #898C8D;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #F18029;"></span>
+            Online &mdash; awaiting pairing
+          </span>
+          <span style="width: 1px; height: 16px; background: #CCCCCC;"></span>
+          <span style="font-variant-numeric: tabular-nums;" id="clock">5:51 PM</span>
+        </div>
+      </div>
+
+      <div style="flex: 1; display: grid; grid-template-columns: 1fr 1.05fr; gap: 72px; align-items: center; padding-top: 8px;">
+        <div style="display: flex; flex-direction: column; gap: 26px;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <span style="width: 34px; height: 3px; background: #EF060F;"></span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.28em; text-transform: uppercase; color: #EF060F;">Screen setup</span>
+          </div>
+          <h1 style="margin: 0; font-size: 62px; line-height: 0.96; font-weight: 800; letter-spacing: -0.025em; color: #00263E;">
+            Pair this display<br>to
+            <span style="background: linear-gradient(100deg, #A00558, #EF060F 55%, #F18029); -webkit-background-clip: text; background-clip: text; color: transparent;">NTV360</span><span style="color: #EF060F;">.</span>
+          </h1>
+          <div style="display: flex; flex-direction: column;">
+            <div style="display: flex; gap: 18px; align-items: baseline; padding: 16px 0; border-top: 1px solid #DCDDDE;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #EF060F;">01</span>
+              <span style="font-size: 19px; color: #00263E;">Visit <strong style="font-weight: 700;">dashboard.ntv360.com</strong></span>
+            </div>
+            <div style="display: flex; gap: 18px; align-items: baseline; padding: 16px 0; border-top: 1px solid #DCDDDE;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #EF060F;">02</span>
+              <span style="font-size: 19px; color: #00263E;">Open <strong style="font-weight: 700;">Screens &rarr; Add a display</strong></span>
+            </div>
+            <div style="display: flex; gap: 18px; align-items: baseline; padding: 16px 0; border-top: 1px solid #DCDDDE; border-bottom: 1px solid #DCDDDE;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #EF060F;">03</span>
+              <span style="font-size: 19px; color: #00263E;">Enter the six-character code</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.26em; text-transform: uppercase; color: #00263E;">Pairing code</span>
+            <span style="font-size: 13px; color: #898C8D; font-variant-numeric: tabular-nums;">Expires in 4:58</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            <div style="aspect-ratio: 1 / 0.86; background: #00263E; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 66px; font-weight: 800; color: #FDFDFD; letter-spacing: -0.02em;">K</div>
+            <div style="aspect-ratio: 1 / 0.86; background: #00263E; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 66px; font-weight: 800; color: #FDFDFD; letter-spacing: -0.02em;">6</div>
+            <div style="aspect-ratio: 1 / 0.86; background: #00263E; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 66px; font-weight: 800; color: #FDFDFD; letter-spacing: -0.02em;">T</div>
+            <div style="aspect-ratio: 1 / 0.86; background: #00263E; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 66px; font-weight: 800; color: #FDFDFD; letter-spacing: -0.02em;">7</div>
+            <div style="aspect-ratio: 1 / 0.86; background: #00263E; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 66px; font-weight: 800; color: #FDFDFD; letter-spacing: -0.02em;">R</div>
+            <div style="aspect-ratio: 1 / 0.86; border-radius: 10px; background: linear-gradient(135deg, #A00558, #EF060F 55%, #F18029); display: flex; align-items: center; justify-content: center; font-size: 66px; font-weight: 800; color: #FDFDFD; letter-spacing: -0.02em;">6</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 20px; background: #F4F4F5; border-radius: 12px; padding: 18px 22px; border-left: 3px solid #F18029;">
+            <div style="width: 62px; height: 62px; border-radius: 8px; background: repeating-linear-gradient(45deg, #00263E 0 3px, #FDFDFD 3px 6px); flex: none;"></div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <span style="font-size: 17px; font-weight: 700; color: #00263E;">Scan with your phone</span>
+              <span style="font-size: 14px; color: #6E7274;">Point the camera here to pair without typing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #DCDDDE; padding-top: 18px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #898C8D;">Display ID &middot; NTV-4482</span>
+        <span style="font-size: 14px; color: #898C8D;" id="today">Thursday, July 30, 2026</span>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function fitCanvas() {
+  var c = document.getElementById('canvas');
+  var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+  var l = (window.innerWidth - 1280 * s) / 2;
+  var t = (window.innerHeight - 720 * s) / 2;
+  c.style.transform = 'translate(' + l + 'px,' + t + 'px) scale(' + s + ')';
+}
+window.addEventListener('resize', fitCanvas);
+fitCanvas();
+
+function updateClock() {
+  var now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  document.getElementById('today').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+}
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+</body>
+</html>
