@@ -173,7 +173,7 @@ body {
 }
 
 .wordmark {
-  height: clamp(40px, 6.5vh, 76px);
+  height: clamp(20px, 3.2vh, 36px);
   width: auto;
   margin-bottom: clamp(4px, 1vh, 10px);
 }
