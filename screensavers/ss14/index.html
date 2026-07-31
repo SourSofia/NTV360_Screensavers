@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NTV 360 — Rising Bubbles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/css/brand.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="back-link" href="../../index.html">&larr; Back to menu</a>
+
+  <main class="scene">
+    <ul class="bg-bubbles">
+      <li></li><li></li><li></li><li></li><li></li>
+      <li></li><li></li><li></li><li></li><li></li>
+    </ul>
+
+    <div class="content">
+      <img class="wordmark" src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" />
+
+      <section class="card glass">
+        <div class="card-top">
+          <div class="card-left">
+            <p class="label">Enter this code in your dashboard</p>
+
+            <div class="code-row">
+              <p class="code" id="pairing-code">GCZX4Y</p>
+
+              <div class="card-right">
+                <div class="qr-tile">
+                  <img id="pairing-qr" alt="QR code to pair this player" width="180" height="180" />
+                </div>
+                <p class="qr-caption">Or scan to pair</p>
+              </div>
+            </div>
+
+            <p class="timestamp" id="pairing-timestamp">11:00 AM &middot; July 30, 2026</p>
+          </div>
+        </div>
+      </section>
+
+      <ol class="steps" id="steps">
+        <li class="step">
+          <span class="step__badge">1</span>
+          <span class="step__text">Visit <span class="step__highlight">dashboard.ntv360.com</span></span>
+        </li>
+        <li class="step">
+          <span class="step__badge">2</span>
+          <span class="step__text">Go to <span class="step__highlight">Screens &rarr; Add a display</span></span>
+        </li>
+        <li class="step">
+          <span class="step__badge">3</span>
+          <span class="step__text">Enter the code above</span>
+        </li>
+      </ol>
+    </div>
+
+    <div class="status-row glass">
+      <span class="dot" id="status-dot"></span>
+      <span class="status-text" id="status-text">Player is online</span>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
