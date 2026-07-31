@@ -13,61 +13,106 @@
   body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #00263E; overflow: hidden; }
   .back-link { position: fixed; top: 16px; left: 16px; z-index: 100; color: #FDFDFD; opacity: 0.55; text-decoration: none; font-size: 14px; font-weight: 600; }
   .back-link:hover { opacity: 1; }
-  .canvas { position: absolute; top: 0; left: 0; width: 1280px; height: 720px; transform-origin: top left; }
+  .split { width: 100vw; height: 100vh; display: flex; overflow: hidden; position: relative; background: #00263E; color: #FDFDFD; }
+  @keyframes floatAurora { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px,25px) scale(1.08); } 100% { transform: translate(25px,-30px) scale(0.95); } }
+  .aurora { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .3; pointer-events: none; animation: floatAurora 20s ease-in-out infinite alternate; }
+  .aurora-1 { top: -12%; right: -8%; width: 46%; height: 70%; background: radial-gradient(circle, #FDFDFD 0%, rgba(253,253,253,0) 70%); }
+  .aurora-2 { bottom: -18%; left: -8%; width: 50%; height: 75%; background: radial-gradient(circle, #F18029 0%, rgba(241,128,41,0) 70%); animation-delay: -10s; }
+  #particle-canvas { position: absolute; inset: 0; pointer-events: none; }
+  .pin-tile {
+    width: clamp(70px, 8.5vw, 150px);
+    aspect-ratio: 0.82;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.16);
+    border: 1px solid rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(2.8rem, 6vw, 6rem);
+    font-weight: 800;
+    color: #FDFDFD;
+  }
+  .pin-tile--accent {
+    background: #FDFDFD;
+    border: none;
+    color: #00263E;
+  }
 </style>
 </head>
 <body>
 <a class="back-link" href="../../index.html">&larr; Back to menu</a>
-<div class="canvas" id="canvas">
-  <div style="width: 1280px; height: 720px; display: flex; overflow: hidden; background: #00263E; color: #FDFDFD;">
-    <div style="width: 50%; display: flex; flex-direction: column; justify-content: center; padding: 0 64px; gap: 24px; position: relative;">
-      <img src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" style="height: 28px; width: auto; position: absolute; top: 48px; left: 64px;">
-      <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: #F18029;">Screen setup</span>
-      <h1 style="margin: 0; font-size: 48px; font-weight: 800; line-height: 1.08; letter-spacing: -0.02em;">Add this display to your account</h1>
-      <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 6px;">
-        <div style="display: flex; gap: 14px; align-items: baseline;">
-          <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #F18029;">01</span>
-          <span style="font-size: 16px; color: rgba(253,253,253,0.85);">Visit dashboard.ntv360.com</span>
-        </div>
-        <div style="display: flex; gap: 14px; align-items: baseline;">
-          <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #F18029;">02</span>
-          <span style="font-size: 16px; color: rgba(253,253,253,0.85);">Go to Screens &rarr; Add a display</span>
-        </div>
-        <div style="display: flex; gap: 14px; align-items: baseline;">
-          <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #F18029;">03</span>
-          <span style="font-size: 16px; color: rgba(253,253,253,0.85);">Enter the code shown opposite</span>
-        </div>
+<div class="split" id="stage">
+  <canvas id="particle-canvas"></canvas>
+  <div class="aurora aurora-1"></div>
+  <div class="aurora aurora-2"></div>
+  <div style="width: 40%; display: flex; flex-direction: column; justify-content: center; padding: 0 clamp(2rem, 3.4vw, 4rem); gap: 1.5rem; position: relative;">
+    <img src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" style="height: clamp(20px, 2.6vw, 30px); width: auto; align-self: flex-start; position: absolute; top: clamp(28px, 4.5vh, 48px); left: clamp(2rem, 3.4vw, 4rem);">
+    <span style="font-family: 'JetBrains Mono', monospace; font-size: clamp(0.65rem, 0.85vw, 0.8rem); letter-spacing: 0.3em; text-transform: uppercase; color: #F18029;">Screen setup</span>
+    <h1 style="margin: 0; font-size: clamp(2rem, 3.8vw, 3.2rem); font-weight: 800; line-height: 1.08; letter-spacing: -0.02em;">Add this display to your account</h1>
+    <div style="display: flex; flex-direction: column; gap: 0.9rem; margin-top: 0.4rem;">
+      <div style="display: flex; gap: 14px; align-items: baseline;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: clamp(0.7rem, 0.9vw, 0.85rem); color: #F18029;">01</span>
+        <span style="font-size: clamp(0.85rem, 1.15vw, 1.05rem); color: rgba(253,253,253,0.85);">Visit dashboard.ntv360.com</span>
+      </div>
+      <div style="display: flex; gap: 14px; align-items: baseline;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: clamp(0.7rem, 0.9vw, 0.85rem); color: #F18029;">02</span>
+        <span style="font-size: clamp(0.85rem, 1.15vw, 1.05rem); color: rgba(253,253,253,0.85);">Go to Screens &rarr; Add a display</span>
+      </div>
+      <div style="display: flex; gap: 14px; align-items: baseline;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: clamp(0.7rem, 0.9vw, 0.85rem); color: #F18029;">03</span>
+        <span style="font-size: clamp(0.85rem, 1.15vw, 1.05rem); color: rgba(253,253,253,0.85);">Enter the code shown opposite</span>
       </div>
     </div>
-    <div style="width: 50%; background: linear-gradient(155deg, #A00558, #EF060F 55%, #F18029); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; position: relative;">
-      <span style="position: absolute; top: 48px; right: 48px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: rgba(255,255,255,0.75);" id="clock">5:51 PM</span>
-      <span style="font-size: 13px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.85);">Pairing code</span>
-      <div style="display: flex; gap: 10px;">
-        <div style="width: 94px; height: 116px; border-radius: 10px; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 64px; font-weight: 800; color: #FDFDFD;">M</div>
-        <div style="width: 94px; height: 116px; border-radius: 10px; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 64px; font-weight: 800; color: #FDFDFD;">8</div>
-        <div style="width: 94px; height: 116px; border-radius: 10px; background: #FDFDFD; display: flex; align-items: center; justify-content: center; font-size: 64px; font-weight: 800; color: #00263E;">K</div>
-        <div style="width: 94px; height: 116px; border-radius: 10px; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 64px; font-weight: 800; color: #FDFDFD;">3</div>
-        <div style="width: 94px; height: 116px; border-radius: 10px; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 64px; font-weight: 800; color: #FDFDFD;">D</div>
-      </div>
-      <span style="font-size: 13px; color: rgba(255,255,255,0.75);">Expires in 4:20</span>
+  </div>
+  <div style="width: 60%; background: linear-gradient(155deg, #A00558, #EF060F 55%, #F18029); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(1.2rem, 2.8vh, 2rem); position: relative;">
+    <span style="position: absolute; top: clamp(28px, 4.5vh, 48px); right: clamp(28px, 3.4vw, 48px); font-family: 'JetBrains Mono', monospace; font-size: clamp(0.7rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.75);" id="clock">5:51 PM</span>
+    <span style="font-size: clamp(0.8rem, 1vw, 0.95rem); font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.85);">Pairing code</span>
+    <div style="display: flex; gap: clamp(0.5rem, 1vw, 0.85rem);">
+      <div class="pin-tile">M</div>
+      <div class="pin-tile">8</div>
+      <div class="pin-tile pin-tile--accent">K</div>
+      <div class="pin-tile">3</div>
+      <div class="pin-tile">Y</div>
+      <div class="pin-tile">D</div>
     </div>
+    <span style="font-size: clamp(0.75rem, 0.95vw, 0.9rem); color: rgba(255,255,255,0.75);">Expires in 4:20</span>
   </div>
 </div>
 <script>
-function fitCanvas() {
-  var c = document.getElementById('canvas');
-  var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
-  var l = (window.innerWidth - 1280 * s) / 2;
-  var t = (window.innerHeight - 720 * s) / 2;
-  c.style.transform = 'translate(' + l + 'px,' + t + 'px) scale(' + s + ')';
-}
-window.addEventListener('resize', fitCanvas);
-fitCanvas();
 function updateClock() {
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 }
 updateClock();
 setInterval(updateClock, 1000);
+
+(function () {
+  var c = document.getElementById('particle-canvas');
+  var ctx = c.getContext('2d');
+  var W, H, n = 26, pts = [];
+  function resize() {
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  for (var i = 0; i < n; i++) pts.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, r: Math.random() * 1.8 + 1, a: Math.random() * 0.35 + 0.15 });
+  (function tick() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < n; i++) {
+      var p = pts[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + p.a + ')'; ctx.fill();
+      for (var j = i + 1; j < n; j++) {
+        var q = pts[j], dx = p.x - q.x, dy = p.y - q.y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 120) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.strokeStyle = 'rgba(255,255,255,' + (0.1 * (1 - d / 120)) + ')'; ctx.lineWidth = 0.6; ctx.stroke(); }
+      }
+    }
+    requestAnimationFrame(tick);
+  })();
+})();
 </script>
 </body>
 </html>

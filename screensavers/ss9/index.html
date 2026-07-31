@@ -14,12 +14,20 @@
   .back-link { position: fixed; top: 16px; left: 16px; z-index: 100; color: #00263E; opacity: 0.55; text-decoration: none; font-size: 14px; font-weight: 600; }
   .back-link:hover { opacity: 1; }
   .canvas { position: absolute; top: 0; left: 0; width: 1280px; height: 720px; transform-origin: top left; }
+  @keyframes floatAurora { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px,25px) scale(1.08); } 100% { transform: translate(25px,-30px) scale(0.95); } }
+  .aurora { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .14; pointer-events: none; animation: floatAurora 20s ease-in-out infinite alternate; }
+  .aurora-1 { top: -12%; right: -8%; width: 46%; height: 70%; background: radial-gradient(circle, #F18029 0%, rgba(241,128,41,0) 70%); }
+  .aurora-2 { bottom: -18%; left: -8%; width: 50%; height: 75%; background: radial-gradient(circle, #A00558 0%, rgba(160,5,88,0) 70%); animation-delay: -10s; }
+  #particle-canvas { position: absolute; inset: 0; pointer-events: none; }
 </style>
 </head>
 <body>
 <a class="back-link" href="../../index.html">&larr; Back to menu</a>
 <div class="canvas" id="canvas">
   <div style="width: 1280px; height: 720px; background: radial-gradient(circle at 50% -10%, #FFF0EA 0%, #FDFDFD 55%); position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 30px;">
+    <canvas id="particle-canvas" width="1280" height="720"></canvas>
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
     <img src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" style="height: 34px; width: auto; position: absolute; top: 44px; left: 50%; transform: translateX(-50%);">
     <span style="position: absolute; top: 48px; right: 56px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #898C8D;" id="clock">5:51 PM</span>
 
@@ -56,6 +64,29 @@ function updateClock() {
 }
 updateClock();
 setInterval(updateClock, 1000);
+
+(function () {
+  var c = document.getElementById('particle-canvas');
+  var ctx = c.getContext('2d');
+  var W = 1280, H = 720, n = 26, pts = [];
+  for (var i = 0; i < n; i++) pts.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, r: Math.random() * 1.8 + 1, a: Math.random() * 0.3 + 0.12 });
+  (function tick() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < n; i++) {
+      var p = pts[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,38,62,' + p.a + ')'; ctx.fill();
+      for (var j = i + 1; j < n; j++) {
+        var q = pts[j], dx = p.x - q.x, dy = p.y - q.y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 120) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.strokeStyle = 'rgba(0,38,62,' + (0.08 * (1 - d / 120)) + ')'; ctx.lineWidth = 0.6; ctx.stroke(); }
+      }
+    }
+    requestAnimationFrame(tick);
+  })();
+})();
 </script>
 </body>
 </html>
