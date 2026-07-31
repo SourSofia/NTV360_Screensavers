@@ -13,71 +13,113 @@
   body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #231F20; overflow: hidden; }
   .back-link { position: fixed; top: 16px; left: 16px; z-index: 100; color: #FDFDFD; opacity: 0.55; text-decoration: none; font-size: 14px; font-weight: 600; }
   .back-link:hover { opacity: 1; }
-  .canvas { position: absolute; top: 0; left: 0; width: 1280px; height: 720px; transform-origin: top left; }
+  .stage { width: 100vw; height: 100vh; background: #231F20; position: relative; overflow: hidden; display: flex; flex-direction: column; color: #FDFDFD; }
+  @keyframes floatAurora { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px,25px) scale(1.08); } 100% { transform: translate(25px,-30px) scale(0.95); } }
+  .aurora { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .35; pointer-events: none; animation: floatAurora 20s ease-in-out infinite alternate; }
+  .aurora-1 { top: -12%; right: -8%; width: 46%; height: 70%; background: radial-gradient(circle, #F18029 0%, rgba(241,128,41,0) 70%); }
+  .aurora-2 { bottom: -18%; left: -8%; width: 50%; height: 75%; background: radial-gradient(circle, #A00558 0%, rgba(160,5,88,0) 70%); animation-delay: -10s; }
+  #particle-canvas { position: absolute; inset: 0; pointer-events: none; }
+  .pin-tile {
+    width: clamp(68px, 8vw, 140px);
+    aspect-ratio: 0.8;
+    border-radius: 10px;
+    background: rgba(253,253,253,0.06);
+    border: 1px solid rgba(253,253,253,0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(2.6rem, 5.5vw, 5.5rem);
+    font-weight: 800;
+  }
+  .pin-tile--accent {
+    background: linear-gradient(135deg, #A00558, #EF060F 55%, #F18029);
+    border: none;
+  }
 </style>
 </head>
 <body>
 <a class="back-link" href="../../index.html">&larr; Back to menu</a>
-<div class="canvas" id="canvas">
-  <div style="width: 1280px; height: 720px; background: #231F20; position: relative; overflow: hidden; display: flex; flex-direction: column; color: #FDFDFD;">
-    <div style="position: absolute; inset: 0; background: linear-gradient(120deg, rgba(160,5,88,0.18), transparent 40%, rgba(241,128,41,0.12)); pointer-events: none;"></div>
-    <div style="position: relative; flex: 1; padding: 50px 68px; display: flex; flex-direction: column;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <img src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" style="height: 28px; width: auto;">
-        <div style="display: flex; align-items: center; gap: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(253,253,253,0.55);">
-          <span>NTV-9034</span>
-          <span style="width: 1px; height: 14px; background: rgba(253,253,253,0.25);"></span>
-          <span id="clock">5:51 PM</span>
-        </div>
+<div class="stage" id="stage">
+  <div style="position: absolute; inset: 0; background: linear-gradient(120deg, rgba(160,5,88,0.18), transparent 40%, rgba(241,128,41,0.12)); pointer-events: none;"></div>
+  <canvas id="particle-canvas"></canvas>
+  <div class="aurora aurora-1"></div>
+  <div class="aurora aurora-2"></div>
+  <div style="position: relative; flex: 1; padding: clamp(2rem, 4.5vh, 3.2rem) clamp(2rem, 4vw, 4.5rem); display: flex; flex-direction: column;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <img src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" style="height: clamp(20px, 2.6vw, 30px); width: auto; align-self: flex-start;">
+      <div style="display: flex; align-items: center; gap: 16px; font-family: 'JetBrains Mono', monospace; font-size: clamp(0.65rem, 0.85vw, 0.8rem); color: rgba(253,253,253,0.55);">
+        <span>NTV-9034</span>
+        <span style="width: 1px; height: 14px; background: rgba(253,253,253,0.25);"></span>
+        <span id="clock">5:51 PM</span>
+      </div>
+    </div>
+
+    <div style="flex: 1; display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(2rem, 4vw, 4rem); align-items: center;">
+      <div style="display: flex; flex-direction: column; gap: 1.4rem;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: clamp(0.65rem, 0.85vw, 0.8rem); letter-spacing: 0.3em; text-transform: uppercase; color: #F18029;">Keynote display</span>
+        <h1 style="margin: 0; font-size: clamp(2.1rem, 3.9vw, 3.4rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em;">Ready to pair with your dashboard</h1>
+        <p style="margin: 0; font-size: clamp(0.85rem, 1.15vw, 1.05rem); line-height: 1.7; color: rgba(253,253,253,0.65); max-width: 28em;">Go to <strong style="color:#FDFDFD;">dashboard.ntv360.com</strong>, choose <strong style="color:#FDFDFD;">Screens &rarr; Add a display</strong>, and type the code shown here.</p>
       </div>
 
-      <div style="flex: 1; display: grid; grid-template-columns: 1.1fr 1fr; gap: 60px; align-items: center;">
-        <div style="display: flex; flex-direction: column; gap: 24px;">
-          <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: #F18029;">Keynote display</span>
-          <h1 style="margin: 0; font-size: 52px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em;">Ready to pair with your dashboard</h1>
-          <p style="margin: 0; font-size: 16px; line-height: 1.7; color: rgba(253,253,253,0.65); max-width: 420px;">Go to <strong style="color:#FDFDFD;">dashboard.ntv360.com</strong>, choose <strong style="color:#FDFDFD;">Screens &rarr; Add a display</strong>, and type the code shown here.</p>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 1.4rem;">
+        <div style="display: flex; gap: clamp(0.5rem, 1vw, 0.85rem);">
+          <div class="pin-tile">Z</div>
+          <div class="pin-tile">5</div>
+          <div class="pin-tile pin-tile--accent">Y</div>
+          <div class="pin-tile">1</div>
+          <div class="pin-tile">C</div>
         </div>
-
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 22px;">
-          <div style="display: flex; gap: 10px;">
-            <div style="width: 92px; height: 114px; border-radius: 10px; background: rgba(253,253,253,0.06); border: 1px solid rgba(253,253,253,0.14); display: flex; align-items: center; justify-content: center; font-size: 62px; font-weight: 800;">Z</div>
-            <div style="width: 92px; height: 114px; border-radius: 10px; background: rgba(253,253,253,0.06); border: 1px solid rgba(253,253,253,0.14); display: flex; align-items: center; justify-content: center; font-size: 62px; font-weight: 800;">5</div>
-            <div style="width: 92px; height: 114px; border-radius: 10px; background: linear-gradient(135deg, #A00558, #EF060F 55%, #F18029); display: flex; align-items: center; justify-content: center; font-size: 62px; font-weight: 800;">Y</div>
-            <div style="width: 92px; height: 114px; border-radius: 10px; background: rgba(253,253,253,0.06); border: 1px solid rgba(253,253,253,0.14); display: flex; align-items: center; justify-content: center; font-size: 62px; font-weight: 800;">1</div>
-            <div style="width: 92px; height: 114px; border-radius: 10px; background: rgba(253,253,253,0.06); border: 1px solid rgba(253,253,253,0.14); display: flex; align-items: center; justify-content: center; font-size: 62px; font-weight: 800;">C</div>
-          </div>
-          <div style="width: 130px; height: 130px; border-radius: 12px; background: #FDFDFD; padding: 10px;">
-            <div style="width: 100%; height: 100%; border-radius: 6px; background: repeating-linear-gradient(45deg, #231F20 0 3px, #FDFDFD 3px 6px);"></div>
-          </div>
-          <span style="font-size: 12px; color: rgba(253,253,253,0.5); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; text-transform: uppercase;">Or scan to pair</span>
+        <div style="width: clamp(90px, 10vw, 150px); aspect-ratio: 1; border-radius: 12px; background: #FDFDFD; padding: 10px;">
+          <div style="width: 100%; height: 100%; border-radius: 6px; background: repeating-linear-gradient(45deg, #231F20 0 3px, #FDFDFD 3px 6px);"></div>
         </div>
+        <span style="font-size: clamp(0.65rem, 0.85vw, 0.8rem); color: rgba(253,253,253,0.5); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; text-transform: uppercase;">Or scan to pair</span>
       </div>
+    </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(253,253,253,0.12); padding-top: 18px;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="width: 8px; height: 8px; border-radius: 50%; background: #3ddc84; box-shadow: 0 0 10px #3ddc84;"></span>
-          <span style="font-size: 13px; color: rgba(253,253,253,0.6);">Player online</span>
-        </div>
-        <span style="font-size: 13px; color: rgba(253,253,253,0.5);">Code refreshes in 4:12</span>
+    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(253,253,253,0.12); padding-top: 18px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #3ddc84; box-shadow: 0 0 10px #3ddc84;"></span>
+        <span style="font-size: clamp(0.75rem, 0.95vw, 0.9rem); color: rgba(253,253,253,0.6);">Player online</span>
       </div>
+      <span style="font-size: clamp(0.75rem, 0.95vw, 0.9rem); color: rgba(253,253,253,0.5);">Code refreshes in 4:12</span>
     </div>
   </div>
 </div>
 <script>
-function fitCanvas() {
-  var c = document.getElementById('canvas');
-  var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
-  var l = (window.innerWidth - 1280 * s) / 2;
-  var t = (window.innerHeight - 720 * s) / 2;
-  c.style.transform = 'translate(' + l + 'px,' + t + 'px) scale(' + s + ')';
-}
-window.addEventListener('resize', fitCanvas);
-fitCanvas();
 function updateClock() {
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 }
 updateClock();
 setInterval(updateClock, 1000);
+
+(function () {
+  var c = document.getElementById('particle-canvas');
+  var ctx = c.getContext('2d');
+  var W, H, n = 26, pts = [];
+  function resize() {
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  for (var i = 0; i < n; i++) pts.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, r: Math.random() * 1.8 + 1, a: Math.random() * 0.35 + 0.15 });
+  (function tick() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < n; i++) {
+      var p = pts[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + p.a + ')'; ctx.fill();
+      for (var j = i + 1; j < n; j++) {
+        var q = pts[j], dx = p.x - q.x, dy = p.y - q.y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 120) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.strokeStyle = 'rgba(255,255,255,' + (0.1 * (1 - d / 120)) + ')'; ctx.lineWidth = 0.6; ctx.stroke(); }
+      }
+    }
+    requestAnimationFrame(tick);
+  })();
+})();
 </script>
 </body>
 </html>
