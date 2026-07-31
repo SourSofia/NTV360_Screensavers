@@ -41,6 +41,20 @@ function setStatus(isOnline) {
   text.textContent = isOnline ? "Player is online" : "Player is offline";
 }
 
+function generateStarShadows(count, spread) {
+  const shadows = [];
+  for (let i = 0; i < count; i++) {
+    const x = Math.floor(Math.random() * spread);
+    const y = Math.floor(Math.random() * spread);
+    shadows.push(`${x}px ${y}px #FFF`);
+  }
+  return shadows.join(", ");
+}
+
+document.getElementById("stars").style.boxShadow = generateStarShadows(700, 2000);
+document.getElementById("stars2").style.boxShadow = generateStarShadows(200, 2000);
+document.getElementById("stars3").style.boxShadow = generateStarShadows(100, 2000);
+
 const pairingCode = generateCode();
 document.getElementById("pairing-code").textContent = pairingCode;
 updateQrCode(pairingCode);

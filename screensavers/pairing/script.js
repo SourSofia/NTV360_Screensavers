@@ -48,3 +48,12 @@ updateTimestamp();
 setStatus(true);
 
 setInterval(updateTimestamp, 1000 * 30);
+
+const stepsList = document.getElementById("steps");
+const stepsToggle = document.getElementById("steps-toggle");
+
+stepsToggle.addEventListener("click", () => {
+  const isHidden = stepsList.hasAttribute("hidden");
+  stepsList.toggleAttribute("hidden", !isHidden);
+  stepsToggle.textContent = isHidden ? "Hide steps" : "Show steps";
+});

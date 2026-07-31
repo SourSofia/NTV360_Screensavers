@@ -12,20 +12,21 @@
 </head>
 <body>
   <a class="back-link" href="../../index.html">&larr; Back to menu</a>
+  <button class="steps-toggle" id="steps-toggle" type="button">Hide steps</button>
 
   <main class="screen">
-    <div class="ribbon ribbon--top"></div>
-    <div class="ribbon ribbon--bottom"></div>
+    <div class="bg"></div>
+    <div class="bg bg--2"></div>
+    <div class="bg bg--3"></div>
 
     <header class="wordmark">
-      <img class="wordmark__logo" src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" />
+      <img class="wordmark__logo" src="../../assets/img/NTV_logo_white_horz_.png" alt="NTV 360" />
     </header>
 
     <section class="pair-card">
       <div class="pair-card__text">
         <p class="pair-card__instruction">Enter this code in your dashboard</p>
         <p class="pair-card__code" id="pairing-code">GCZX4Y</p>
-        <p class="pair-card__timestamp" id="pairing-timestamp">11:00 AM &middot; July 29, 2024</p>
       </div>
 
       <div class="pair-card__divider"></div>
@@ -36,7 +37,7 @@
       </div>
     </section>
 
-    <ol class="steps">
+    <ol class="steps" id="steps">
       <li class="step">
         <span class="step__badge">1</span>
         <span class="step__text">Visit <span class="step__highlight">dashboard.ntv360.com</span></span>
@@ -51,9 +52,12 @@
       </li>
     </ol>
 
-    <footer class="status">
-      <span class="status__dot status__dot--online" id="status-dot"></span>
-      <span class="status__text" id="status-text">PLAYER IS ONLINE</span>
+    <footer class="meta-bar">
+      <span class="meta-bar__timestamp" id="pairing-timestamp">11:00 AM &middot; July 29, 2024</span>
+      <span class="status">
+        <span class="status__dot status__dot--online" id="status-dot"></span>
+        <span class="status__text" id="status-text">PLAYER IS ONLINE</span>
+      </span>
     </footer>
   </main>
 

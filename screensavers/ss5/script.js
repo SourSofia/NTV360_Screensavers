@@ -93,3 +93,16 @@ updateClock();
 updateTimer();
 setInterval(updateClock, 1000);
 setInterval(updateTimer, 1000);
+
+const steps = document.getElementById("steps");
+const altInstruction = document.getElementById("alt-instruction");
+const stepsToggle = document.getElementById("steps-toggle");
+const poster = document.getElementById("poster");
+
+stepsToggle.addEventListener("click", () => {
+  const isHidden = steps.hasAttribute("hidden");
+  steps.toggleAttribute("hidden", !isHidden);
+  altInstruction.toggleAttribute("hidden", isHidden);
+  poster.classList.toggle("no-accent", !isHidden);
+  stepsToggle.textContent = isHidden ? "Hide steps" : "Show steps";
+});

@@ -270,7 +270,7 @@ body {
 .code-display {
   position: relative;
   font-weight: 800;
-  font-size: 3.4rem;
+  font-size: clamp(4.5rem, 9vh, 6.5rem);
   letter-spacing: 0.2em;
   padding: 0.25rem 0;
   background: var(--ntv-gradient);

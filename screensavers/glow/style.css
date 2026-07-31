@@ -50,29 +50,61 @@ body {
   overflow: hidden;
   display: flex;
   align-items: center;
-  background: var(--ntv-navy);
+  justify-content: center;
+  background: radial-gradient(ellipse at bottom, var(--ntv-navy) 0%, #000a12 100%);
 }
 
-.ribbon {
+/* Parallax starfield: each layer is a single 1px box carrying hundreds of
+   random box-shadow "stars" (generated in script.js), drifting upward at a
+   different speed per layer. The ::after copy is offset by the drift
+   distance so the loop is seamless when the animation resets. */
+.stars {
   position: absolute;
-  width: 125vw;
-  border-radius: 999px;
-  background: linear-gradient(45deg, var(--ntv-violet), var(--ntv-red), var(--ntv-orange));
-  transform: rotate(-14deg);
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  animation: stars-drift 50s linear infinite;
 }
 
-.ribbon--top {
-  height: clamp(140px, 31.5vh, 340px);
-  top: clamp(40px, 11.1vh, 120px);
-  left: -26vw;
-  opacity: 0.9;
+.stars::after {
+  content: "";
+  position: absolute;
+  top: 2000px;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  box-shadow: inherit;
 }
 
-.ribbon--bottom {
-  height: clamp(80px, 16.7vh, 180px);
-  bottom: clamp(20px, 5.6vh, 60px);
-  left: -36.5vw;
-  opacity: 0.35;
+.stars--medium {
+  width: 2px;
+  height: 2px;
+  animation-duration: 100s;
+}
+
+.stars--medium::after {
+  width: 2px;
+  height: 2px;
+}
+
+.stars--big {
+  width: 3px;
+  height: 3px;
+  animation-duration: 150s;
+}
+
+.stars--big::after {
+  width: 3px;
+  height: 3px;
+}
+
+@keyframes stars-drift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-2000px); }
 }
 
 .content {
@@ -80,60 +112,71 @@ body {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: clamp(20px, 4.1vh, 44px);
+  align-items: center;
+  gap: 0;
   padding: 0 clamp(32px, 7.3vw, 140px);
-  max-width: 61.5vw;
+  max-width: 80vw;
 }
 
-/* Sits in normal flow above the card, left-aligned with it. The
+/* Sits in normal flow above the card, centered above it. The
    drop-shadow keeps it legible if it ever crosses the ribbon behind it. */
 .wordmark {
-  align-self: flex-start;
+  align-self: center;
   display: block;
-  height: clamp(48px, 8.5vh, 96px);
+  height: clamp(80px, 13.5vh, 156px);
   width: auto;
+  margin-top: clamp(4px, 1vh, 10px);
   filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.6));
 }
 
 .card {
   border-radius: clamp(20px, 3.3vh, 36px);
-  padding: clamp(28px, 5.2vh, 56px) clamp(28px, 3.3vw, 64px);
+  padding: clamp(8px, 1.5vh, 16px) clamp(28px, 3.3vw, 64px) clamp(28px, 5.2vh, 56px);
   display: flex;
   flex-direction: column;
 }
 
 .card-top {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: clamp(28px, 3.3vw, 64px);
+  justify-content: center;
 }
 
 .card-left {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: clamp(10px, 1.85vh, 20px);
+  min-width: 0;
+}
+
+.code-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: clamp(28px, 3.3vw, 64px);
 }
 
 .label {
-  font-size: clamp(14px, 2.2vh, 24px);
+  font-size: clamp(22px, 3.6vh, 38px);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.85);
 }
 
 .code {
-  font-size: clamp(38px, 7.8vh, 84px);
+  font-size: clamp(120px, min(23vh, 11.5vw), 250px);
   font-weight: 800;
   letter-spacing: clamp(6px, 1.3vh, 14px);
   padding-left: clamp(6px, 1.3vh, 14px); /* re-center for the trailing letter-spacing gap */
   color: var(--ntv-white);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
   line-height: 1;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
 }
 
 .timestamp {
-  font-size: clamp(13px, 2.04vh, 22px);
+  font-size: clamp(17px, 2.6vh, 27px);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
 }
@@ -143,6 +186,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: clamp(8px, 1.3vh, 14px);
+  flex: 0 0 auto;
 }
 
 .qr-tile {
@@ -171,17 +215,16 @@ body {
   color: rgba(255, 255, 255, 0.7);
 }
 
-.divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.18);
-  margin: clamp(20px, 3.7vh, 40px) 0 clamp(16px, 2.96vh, 32px);
-}
-
 .status-row {
+  position: fixed;
+  right: clamp(20px, 3.3vw, 40px);
+  bottom: clamp(20px, 3.7vh, 40px);
+  z-index: 5;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: clamp(8px, 1.1vh, 12px);
+  border-radius: clamp(10px, 1.5vh, 16px);
+  padding: clamp(10px, 1.6vh, 16px) clamp(16px, 2.2vw, 24px);
 }
 
 .dot {

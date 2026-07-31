@@ -29,6 +29,52 @@
   }
   .back-link:hover { opacity: 1; }
 
+  .steps-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 100;
+    background: rgba(0, 38, 62, 0.06);
+    border: 1px solid rgba(0, 38, 62, 0.2);
+    color: #00263E;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 16px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, background 0.2s ease;
+  }
+
+  .steps-toggle:hover {
+    opacity: 1;
+    background: rgba(0, 38, 62, 0.12);
+  }
+
+  .steps[hidden],
+  .alt-instruction[hidden] {
+    display: none;
+  }
+
+  .alt-instruction {
+    font-size: clamp(16px, 2.7vh, 29px);
+    font-weight: 500;
+    color: #231F20;
+    line-height: 1.5;
+    border-top: clamp(1px, 0.19vh, 2px) solid #00263E;
+    padding-top: clamp(14px, 2.6vh, 28px);
+  }
+
+  .alt-instruction strong {
+    color: #EF060F;
+    font-weight: 800;
+  }
+
+  /* When steps are hidden, the accent tile goes too, per the "no accent" variant. */
+  .poster.no-accent .code-tile--last {
+    background: #00263E;
+  }
+
   /* Fluid poster — every size below is clamp()'d against viewport height/width
      so it fills any screen naturally with no scaling or letterboxing. At a
      1920x1080 TV the clamp maxes are what the design was authored at. */
@@ -249,9 +295,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: clamp(80px, 20vh, 216px);
+    height: clamp(100px, 25vh, 270px);
     color: #FDFDFD;
-    font-size: clamp(48px, 12.2vh, 132px);
+    font-size: clamp(64px, 16vh, 175px);
     font-weight: 800;
     line-height: 1;
     background: #00263E;
@@ -365,8 +411,9 @@
 </head>
 <body>
   <a class="back-link" href="../../index.html">&larr; Back to menu</a>
+  <button class="steps-toggle" id="steps-toggle" type="button">Hide steps</button>
 
-  <div class="poster">
+  <div class="poster" id="poster">
     <div class="top-bar"></div>
     <div class="diagonal-1"></div>
     <div class="diagonal-2"></div>
@@ -390,7 +437,7 @@
             <span class="eyebrow__text">SCREEN SETUP</span>
           </div>
           <div class="headline">PAIR THIS<br>DISPLAY TO<br><em>NTV360.</em></div>
-          <div class="steps">
+          <div class="steps" id="steps">
             <div class="step">
               <span class="step__num">01</span>
               <span class="step__text">Visit <strong>dashboard.ntv360.com</strong></span>
@@ -404,6 +451,9 @@
               <span class="step__text">Enter the six-character code</span>
             </div>
           </div>
+          <p class="alt-instruction" id="alt-instruction" hidden>
+            Open <strong>dashboard.ntv360.com</strong> and enter the code shown.
+          </p>
         </div>
 
         <div class="right-col">
