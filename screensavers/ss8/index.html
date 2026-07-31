@@ -13,54 +13,97 @@
   body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #00263E; overflow: hidden; }
   .back-link { position: fixed; top: 16px; left: 16px; z-index: 100; color: #FDFDFD; opacity: 0.55; text-decoration: none; font-size: 14px; font-weight: 600; }
   .back-link:hover { opacity: 1; }
-  .canvas { position: absolute; top: 0; left: 0; width: 1280px; height: 720px; transform-origin: top left; }
+  .split { width: 100vw; height: 100vh; display: flex; overflow: hidden; position: relative; }
+  @keyframes floatAurora { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px,25px) scale(1.08); } 100% { transform: translate(25px,-30px) scale(0.95); } }
+  .aurora { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .3; pointer-events: none; animation: floatAurora 20s ease-in-out infinite alternate; }
+  .aurora-1 { top: -12%; right: -8%; width: 46%; height: 70%; background: radial-gradient(circle, #FDFDFD 0%, rgba(253,253,253,0) 70%); }
+  .aurora-2 { bottom: -18%; left: -8%; width: 50%; height: 75%; background: radial-gradient(circle, #F18029 0%, rgba(241,128,41,0) 70%); animation-delay: -10s; }
+  #particle-canvas { position: absolute; inset: 0; pointer-events: none; }
+  .pin-tile {
+    width: clamp(64px, 8vw, 132px);
+    aspect-ratio: 0.82;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(2.6rem, 5.5vw, 5.5rem);
+    font-weight: 800;
+    color: #FDFDFD;
+  }
+  .pin-tile--accent {
+    background: linear-gradient(135deg, #A00558, #EF060F 55%, #F18029);
+    border: none;
+  }
 </style>
 </head>
 <body>
 <a class="back-link" href="../../index.html">&larr; Back to menu</a>
-<div class="canvas" id="canvas">
-  <div style="width: 1280px; height: 720px; display: flex; overflow: hidden;">
-    <div style="width: 46%; background: linear-gradient(160deg, #A00558, #EF060F 55%, #F18029); display: flex; flex-direction: column; justify-content: space-between; padding: 48px 44px; color: #FDFDFD;">
-      <img src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" style="height: 28px; width: auto; filter: brightness(0) invert(1);">
-      <div style="display: flex; flex-direction: column; gap: 20px;">
-        <h1 style="margin: 0; font-size: 46px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em;">Link this screen to your dashboard</h1>
-        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.9); max-width: 380px;">Visit <strong>dashboard.ntv360.com</strong>, open <strong>Screens &rarr; Add a display</strong>, then type the code shown opposite.</p>
-      </div>
-      <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.75);">Display ID &middot; NTV-7710</span>
+<div class="split" id="stage">
+  <canvas id="particle-canvas"></canvas>
+  <div class="aurora aurora-1"></div>
+  <div class="aurora aurora-2"></div>
+  <div style="width: 40%; background: linear-gradient(160deg, #A00558, #EF060F 55%, #F18029); display: flex; flex-direction: column; justify-content: space-between; padding: clamp(2rem, 6.7vh, 4rem) clamp(1.5rem, 3.4vw, 3.5rem); color: #FDFDFD;">
+    <img src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" style="height: clamp(20px, 2.6vw, 30px); width: auto; align-self: flex-start; filter: brightness(0) invert(1);">
+    <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+      <h1 style="margin: 0; font-size: clamp(1.9rem, 3.6vw, 3rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em;">Link this screen to your dashboard</h1>
+      <p style="margin: 0; font-size: clamp(0.85rem, 1.25vw, 1.1rem); line-height: 1.6; color: rgba(255,255,255,0.9); max-width: 28em;">Visit <strong>dashboard.ntv360.com</strong>, open <strong>Screens &rarr; Add a display</strong>, then type the code shown opposite.</p>
     </div>
-    <div style="width: 54%; background: #00263E; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; position: relative;">
-      <span style="position: absolute; top: 32px; right: 40px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: rgba(253,253,253,0.55);" id="clock">5:51 PM</span>
-      <span style="font-size: 14px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(253,253,253,0.6);">Pairing code</span>
-      <div style="display: flex; gap: 12px;">
-        <div style="width: 96px; height: 118px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 66px; font-weight: 800; color: #FDFDFD;">V</div>
-        <div style="width: 96px; height: 118px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 66px; font-weight: 800; color: #FDFDFD;">2</div>
-        <div style="width: 96px; height: 118px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 66px; font-weight: 800; color: #FDFDFD;">F</div>
-        <div style="width: 96px; height: 118px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 66px; font-weight: 800; color: #FDFDFD;">9</div>
-        <div style="width: 96px; height: 118px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 66px; font-weight: 800; color: #FDFDFD;">H</div>
-        <div style="width: 96px; height: 118px; border-radius: 10px; background: linear-gradient(135deg, #A00558, #EF060F 55%, #F18029); display: flex; align-items: center; justify-content: center; font-size: 66px; font-weight: 800; color: #FDFDFD;">4</div>
-      </div>
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="width: 8px; height: 8px; border-radius: 50%; background: #3ddc84; box-shadow: 0 0 10px #3ddc84;"></span>
-        <span style="font-size: 13px; color: rgba(253,253,253,0.6);">Player online &middot; awaiting pairing</span>
-      </div>
+    <span style="font-family: 'JetBrains Mono', monospace; font-size: clamp(0.65rem, 0.9vw, 0.8rem); letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.75);">Display ID &middot; NTV-7710</span>
+  </div>
+  <div style="width: 60%; background: #00263E; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(1.2rem, 2.8vh, 2rem); position: relative;">
+    <span style="position: absolute; top: clamp(20px, 3vh, 32px); right: clamp(24px, 3vw, 40px); font-family: 'JetBrains Mono', monospace; font-size: clamp(0.7rem, 0.9vw, 0.85rem); color: rgba(253,253,253,0.55);" id="clock">5:51 PM</span>
+    <span style="font-size: clamp(0.8rem, 1vw, 0.95rem); font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(253,253,253,0.6);">Pairing code</span>
+    <div style="display: flex; gap: clamp(0.5rem, 1vw, 0.85rem);">
+      <div class="pin-tile">V</div>
+      <div class="pin-tile">2</div>
+      <div class="pin-tile">F</div>
+      <div class="pin-tile">9</div>
+      <div class="pin-tile">H</div>
+      <div class="pin-tile pin-tile--accent">4</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <span style="width: 8px; height: 8px; border-radius: 50%; background: #3ddc84; box-shadow: 0 0 10px #3ddc84;"></span>
+      <span style="font-size: clamp(0.75rem, 0.95vw, 0.9rem); color: rgba(253,253,253,0.6);">Player online &middot; awaiting pairing</span>
     </div>
   </div>
 </div>
 <script>
-function fitCanvas() {
-  var c = document.getElementById('canvas');
-  var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
-  var l = (window.innerWidth - 1280 * s) / 2;
-  var t = (window.innerHeight - 720 * s) / 2;
-  c.style.transform = 'translate(' + l + 'px,' + t + 'px) scale(' + s + ')';
-}
-window.addEventListener('resize', fitCanvas);
-fitCanvas();
 function updateClock() {
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 }
 updateClock();
 setInterval(updateClock, 1000);
+
+(function () {
+  var c = document.getElementById('particle-canvas');
+  var ctx = c.getContext('2d');
+  var W, H, n = 26, pts = [];
+  function resize() {
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  for (var i = 0; i < n; i++) pts.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, r: Math.random() * 1.8 + 1, a: Math.random() * 0.35 + 0.15 });
+  (function tick() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < n; i++) {
+      var p = pts[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + p.a + ')'; ctx.fill();
+      for (var j = i + 1; j < n; j++) {
+        var q = pts[j], dx = p.x - q.x, dy = p.y - q.y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 120) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.strokeStyle = 'rgba(255,255,255,' + (0.1 * (1 - d / 120)) + ')'; ctx.lineWidth = 0.6; ctx.stroke(); }
+      }
+    }
+    requestAnimationFrame(tick);
+  })();
+})();
 </script>
 </body>
 </html>
