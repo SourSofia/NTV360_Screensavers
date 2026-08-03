@@ -293,7 +293,7 @@
     to { transform: translateY(-900px); }
   }
 
-  .pair-panel > * { position: relative; z-index: 2; }
+  .pair-panel > *:not(.stars) { position: relative; z-index: 2; }
 
   .ntv-wordmark {
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -599,18 +599,18 @@
 
 <script>
   // Parallax starfield, reused from the NTV screensavers.
-  function generateStarShadows(count, spread) {
+  function generateStarShadows(count, spreadX, spreadY) {
     const shadows = [];
     for (let i = 0; i < count; i++) {
-      const x = Math.floor(Math.random() * spread);
-      const y = Math.floor(Math.random() * spread);
+      const x = Math.floor(Math.random() * spreadX);
+      const y = Math.floor(Math.random() * spreadY);
       shadows.push(`${x}px ${y}px #FFF`);
     }
     return shadows.join(", ");
   }
   ["stars", "stars2", "stars3"].forEach((id) => {
     const el = document.getElementById(id);
-    if (el) el.style.boxShadow = generateStarShadows(120, 900);
+    if (el) el.style.boxShadow = generateStarShadows(160, 1400, 900);
   });
 
   const panelWaiting = document.getElementById('panel-waiting');
