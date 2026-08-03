@@ -12,10 +12,16 @@
 </head>
 <body>
   <main class="menu">
-    <h1 class="menu__title">NTV 360 Screensavers</h1>
-    <p class="menu__subtitle">Pick a screensaver to preview</p>
+    <nav class="top-nav">
+      <button class="top-nav__tab is-active" type="button" data-view="screensavers">Screensavers</button>
+      <button class="top-nav__tab" type="button" data-view="dashboard">Dashboard Proposals</button>
+    </nav>
 
-    <nav class="menu__grid">
+    <section class="view" id="view-screensavers">
+      <h1 class="menu__title">NTV 360 Screensavers</h1>
+      <p class="menu__subtitle">Pick a screensaver to preview</p>
+
+      <nav class="menu__grid">
       <a class="menu__card" href="screensavers/pairing/index.html">
         <span class="menu__card-preview"><iframe src="screensavers/pairing/index.html" tabindex="-1" loading="lazy"></iframe></span>
         <span class="menu__card-label">Pairing / Setup</span>
@@ -106,9 +112,46 @@
         <span class="menu__card-label">Aurora Glow</span>
         <span class="menu__card-desc">Centered pairing card over drifting brand-colored gradient spheres</span>
       </a>
-    </nav>
+      </nav>
+    </section>
+
+    <section class="view" id="view-dashboard" hidden>
+      <h1 class="menu__title">Dashboard Proposals</h1>
+      <p class="menu__subtitle">Design proposals for the n-Compass dashboard</p>
+
+      <nav class="menu__grid">
+        <a class="menu__card" href="dashboard-proposals/proposal-1/index.html">
+          <span class="menu__card-preview"><iframe src="dashboard-proposals/proposal-1/index.html" tabindex="-1" loading="lazy"></iframe></span>
+          <span class="menu__card-label">Pairing Modal — Empty License State</span>
+          <span class="menu__card-desc">Unpaired dealer license page with a "Pair a device" modal (type the code &rarr; waiting &rarr; success)</span>
+        </a>
+        <a class="menu__card" href="dashboard-proposals/proposal-2/index.html">
+          <span class="menu__card-preview"><iframe src="dashboard-proposals/proposal-2/index.html" tabindex="-1" loading="lazy"></iframe></span>
+          <span class="menu__card-label">Inline Pairing — No Modal</span>
+          <span class="menu__card-desc">Code entry happens directly on the page in an NTV-branded starfield panel, no popup</span>
+        </a>
+      </nav>
+    </section>
   </main>
 
   <script src="assets/js/launcher.js"></script>
+  <script>
+    document.querySelectorAll(".top-nav__tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".top-nav__tab").forEach((t) => t.classList.remove("is-active"));
+        tab.classList.add("is-active");
+
+        const target = tab.dataset.view;
+        document.querySelectorAll(".view").forEach((view) => {
+          view.hidden = view.id !== `view-${target}`;
+        });
+
+        // Previews inside a hidden section have clientWidth 0 when
+        // scalePreviews() first ran at load, so their iframes got scaled
+        // to zero — recompute now that the section is visible.
+        if (typeof scalePreviews === "function") scalePreviews();
+      });
+    });
+  </script>
 </body>
 </html>

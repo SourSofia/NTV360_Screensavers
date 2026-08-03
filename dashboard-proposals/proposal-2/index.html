@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>n-Compass — Inline Pairing Proposal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green: #6FBE45;
+    --green-dark: #56A233;
+    --text: #1F2937;
+    --muted: #6B7280;
+    --border: #E5E7EB;
+    --bg: #FFFFFF;
+    --bg-soft: #F9FAFB;
+    --ntv-navy: #00263E;
+    --ntv-orange: #F18029;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  [hidden] { display: none !important; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-soft);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .proposal-tag {
+    position: relative;
+    background: #111827;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-align: center;
+    padding: 12px 220px;
+  }
+
+  .back-home {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 999px;
+  }
+
+  .back-home:hover { background: rgba(255, 255, 255, 0.22); }
+
+  /* ---------- Top nav (same chrome as proposal 1) ---------- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 14px 28px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 800;
+    font-size: 19px;
+    color: #111827;
+    white-space: nowrap;
+  }
+
+  .logo .dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid var(--green);
+    position: relative;
+  }
+
+  .logo .dot::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .logo sup {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    flex: 1;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .nav-link.active { color: var(--green-dark); }
+  .nav-link .chev { font-size: 10px; opacity: 0.6; }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: var(--muted);
+    font-size: 13px;
+    width: 220px;
+  }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--muted);
+    font-size: 16px;
+  }
+
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .user-chip .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .user-chip .name { font-weight: 700; line-height: 1.2; }
+  .user-chip .role { color: var(--muted); font-size: 11px; }
+
+  /* ---------- Page body ---------- */
+  .page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 28px 60px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  .breadcrumb a { color: var(--green-dark); text-decoration: none; font-weight: 600; }
+  .breadcrumb .sep { color: #D1D5DB; }
+  .breadcrumb .current { color: var(--text); font-weight: 700; }
+  .breadcrumb .date { margin-left: auto; color: var(--muted); }
+
+  .dealer-bar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .dealer-info { display: flex; gap: 40px; }
+  .dealer-info .field { font-size: 13px; }
+  .dealer-info .field .k { color: var(--muted); margin-right: 6px; }
+  .dealer-info .field .v { font-weight: 700; color: var(--text); }
+  .dealer-info .field .v.placeholder { color: #C4C9CF; font-weight: 500; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+
+  .btn-primary { background: var(--green); color: #fff; }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-outline { background: #fff; border-color: var(--border); color: var(--text); }
+  .btn-outline:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .tabs {
+    display: flex;
+    gap: 34px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .tab {
+    padding: 6px 2px 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #C4C9CF;
+    border-bottom: 2px solid transparent;
+  }
+
+  .tab.active { color: var(--green-dark); border-bottom-color: var(--green-dark); }
+
+  /* ---------- Inline pairing panel (NTV-branded starfield, matching
+     the screensaver aesthetic used elsewhere in this project) ---------- */
+  .pair-panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    background: radial-gradient(ellipse at bottom, var(--ntv-navy) 0%, #000a12 100%);
+    padding: 64px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+    color: #fff;
+  }
+
+  .stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 1px;
+    height: 1px;
+    background: transparent;
+    animation: stars-drift 60s linear infinite;
+  }
+
+  .stars::after {
+    content: "";
+    position: absolute;
+    top: 900px;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    background: transparent;
+    box-shadow: inherit;
+  }
+
+  @keyframes stars-drift {
+    from { transform: translateY(0); }
+    to { transform: translateY(-900px); }
+  }
+
+  .pair-panel > * { position: relative; z-index: 2; }
+
+  .ntv-wordmark {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+  }
+
+  .ntv-wordmark sub {
+    color: var(--ntv-orange);
+    font-size: 12px;
+    font-weight: 800;
+    bottom: -2px;
+  }
+
+  .pair-panel h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 800;
+  }
+
+  .pair-panel p {
+    margin: 0;
+    max-width: 440px;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .code-inputs {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .code-inputs input {
+    width: 56px;
+    height: 68px;
+    text-align: center;
+    font-size: 26px;
+    font-weight: 800;
+    font-family: inherit;
+    color: #fff;
+    text-transform: uppercase;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+  }
+
+  .code-inputs input:focus {
+    outline: none;
+    border-style: solid;
+    border-color: var(--ntv-orange);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .code-inputs input:not(:placeholder-shown) {
+    border-style: solid;
+    border-color: var(--green);
+    background: rgba(111, 190, 69, 0.12);
+  }
+
+  .code-caption {
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .pair-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .btn-ghost-dark {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+  }
+
+  .btn-ghost-dark:hover { background: rgba(255, 255, 255, 0.16); }
+
+  .spinner {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--ntv-orange);
+    animation: spin 0.9s linear infinite;
+    margin: 8px 0;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .success-check {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(111, 190, 69, 0.15);
+    color: var(--green);
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    margin: 8px 0;
+  }
+
+  /* ---------- Populated mockup, same as proposal 1 ---------- */
+  .content-grid { display: grid; grid-template-columns: 420px 1fr; gap: 24px; align-items: start; margin-top: 24px; }
+  .card { border: 1px solid var(--border); border-radius: 16px; background: var(--bg); padding: 24px; }
+  .card h2 { margin: 0 0 4px; font-size: 16px; font-weight: 800; }
+  .card .hint { margin: 0 0 20px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .field-label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .add-title-row { display: flex; gap: 10px; margin-bottom: 24px; }
+  .add-title-row input { flex: 1; font-family: inherit; font-size: 13px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; color: var(--text); }
+  .title-list { list-style: none; margin: 0 0 20px; padding: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .title-list li { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--green-dark); padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .title-list li:last-child { border-bottom: 0; }
+  .dot-bullet { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+  .card .footnote { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+  .card-actions { display: flex; gap: 10px; }
+  .progress-stack { display: flex; flex-direction: column; gap: 20px; }
+  .progress-card { border: 1px solid var(--border); border-radius: 16px; background: var(--bg); padding: 20px 24px; }
+  .progress-card__head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .progress-card__title { font-size: 14px; font-weight: 700; color: var(--green-dark); white-space: nowrap; }
+  .progress-bar { flex: 1; height: 8px; border-radius: 999px; background: var(--bg-soft); overflow: hidden; }
+  .progress-bar span { display: block; height: 100%; background: var(--green); border-radius: 999px; }
+  .progress-card__pct { font-size: 12px; font-weight: 700; color: var(--muted); width: 32px; text-align: right; }
+  .checklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .checklist li { position: relative; padding-left: 26px; font-size: 13px; color: var(--text); }
+  .checklist li::before { content: ""; position: absolute; left: 0; top: 2px; width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); }
+  .checklist li.is-done { color: var(--muted); text-decoration: line-through; }
+  .checklist li.is-done::before { background: var(--green); border-color: var(--green); }
+  .checklist li.is-done::after { content: ""; position: absolute; left: 4px; top: 5px; width: 8px; height: 4px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg); }
+</style>
+</head>
+<body>
+
+<div class="proposal-tag">
+  <a class="back-home" href="../../index.html">&larr; Back to home</a>
+  DESIGN PROPOSAL 2 — Inline Pairing (no modal)
+</div>
+
+<header class="topbar">
+  <div class="logo"><span class="dot"></span>n<span style="color:var(--muted); font-weight:600;">·</span>compass<sup>TV</sup></div>
+  <nav class="nav-links">
+    <a class="nav-link active" href="#">&#9638; Dashboard</a>
+    <a class="nav-link" href="#">Dealers <span class="chev">&#9662;</span></a>
+    <a class="nav-link" href="#">Media Library <span class="chev">&#9662;</span></a>
+    <a class="nav-link" href="#">Channel <span class="chev">&#9662;</span></a>
+    <a class="nav-link" href="#">Screens <span class="chev">&#9662;</span></a>
+    <a class="nav-link" href="#">Directory <span class="chev">&#9662;</span></a>
+  </nav>
+  <div class="topbar-right">
+    <div class="search">&#128269; Search</div>
+    <span class="icon-btn">&#9728;</span>
+    <span class="icon-btn">&#128276;</span>
+    <div class="user-chip">
+      <span class="avatar">&#128100;</span>
+      <span>
+        <div class="name">Lorem Ipsum</div>
+        <div class="role">Super Admin</div>
+      </span>
+      <span class="chev">&#9662;</span>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <div class="breadcrumb">
+    <a href="#">Dealers</a><span class="sep">&rsaquo;</span>
+    <a href="#">Licenses</a><span class="sep">&rsaquo;</span>
+    <span class="current">Single License Page</span>
+    <span class="date" id="today">Wednesday, September 04, 2024</span>
+  </div>
+
+  <div class="dealer-bar">
+    <div class="dealer-info">
+      <div class="field"><span class="k">Dealer Name:</span><span class="v placeholder" id="field-dealer">Not paired yet</span></div>
+      <div class="field"><span class="k">Business Hours:</span><span class="v placeholder" id="field-hours">&mdash;</span></div>
+      <div class="field"><span class="k">Hostname:</span><span class="v placeholder" id="field-hostname">&mdash;</span></div>
+      <div class="field"><span class="k">License Key:</span><span class="v">f02d627e-44fe-476f-8808-bf6d511179c1</span></div>
+    </div>
+    <div class="dealer-actions">
+      <button class="btn btn-outline" id="show-analytics" disabled>&#10094; Show Analytics</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <span class="tab active">Details and Content</span>
+    <span class="tab">Terminal and Activity</span>
+    <span class="tab">Setting</span>
+    <span class="tab">Installation</span>
+  </div>
+
+  <!-- State 1: waiting to pair, code typed directly on the page -->
+  <div class="pair-panel" id="panel-waiting">
+    <div class="stars" id="stars"></div>
+
+    <div class="ntv-wordmark">NTV<sub>360</sub></div>
+    <h1 id="waiting-heading">Waiting to pair</h1>
+    <p id="waiting-sub">No device is connected to this license yet. Look for the 6-character code on the screen, then type it below.</p>
+
+    <div class="code-inputs" id="code-inputs">
+      <input type="text" inputmode="text" maxlength="1" autocomplete="off" placeholder=" " />
+      <input type="text" inputmode="text" maxlength="1" autocomplete="off" placeholder=" " />
+      <input type="text" inputmode="text" maxlength="1" autocomplete="off" placeholder=" " />
+      <input type="text" inputmode="text" maxlength="1" autocomplete="off" placeholder=" " />
+      <input type="text" inputmode="text" maxlength="1" autocomplete="off" placeholder=" " />
+      <input type="text" inputmode="text" maxlength="1" autocomplete="off" placeholder=" " />
+    </div>
+    <p class="code-caption" id="code-caption">Type the code shown on the screen</p>
+
+    <div class="pair-actions">
+      <button class="btn btn-ghost-dark" id="clear-code">Clear</button>
+      <button class="btn btn-primary" id="submit-pair" disabled>Pair device</button>
+    </div>
+  </div>
+
+  <!-- State 2: pairing in progress -->
+  <div class="pair-panel" id="panel-loading" hidden>
+    <div class="stars" id="stars2"></div>
+    <div class="ntv-wordmark">NTV<sub>360</sub></div>
+    <div class="spinner"></div>
+    <h1 id="loading-heading" style="font-size:22px;">Pairing 123456&hellip;</h1>
+    <p>Connecting to the player and pulling in its details. This usually takes a few seconds.</p>
+  </div>
+
+  <!-- State 3: success -->
+  <div class="pair-panel" id="panel-success" hidden>
+    <div class="stars" id="stars3"></div>
+    <div class="ntv-wordmark">NTV<sub>360</sub></div>
+    <div class="success-check">&#10003;</div>
+    <h1 style="font-size:22px;">Paired with Pho Saigon</h1>
+    <p>Dealer 219-RKT is now linked to this license.</p>
+    <div class="pair-actions">
+      <button class="btn btn-primary" id="view-license">View license</button>
+    </div>
+  </div>
+
+  <!-- Populated mockup, shown after pairing (illustrative only) -->
+  <div class="content-grid" id="paired-content" hidden>
+    <div class="card">
+      <h2>Checklist Control</h2>
+      <p class="hint">Fill up this section if the title you are looking for is not existing on the available title list.</p>
+
+      <span class="field-label">Add Title</span>
+      <div class="add-title-row">
+        <input type="text" placeholder="Note: This will be the headline per checklist. (Ex. Day 1 - Installation)" />
+        <button class="btn btn-primary">Save Title</button>
+      </div>
+
+      <span class="field-label">Available Titles:</span>
+      <ul class="title-list">
+        <li><span class="dot-bullet"></span>Pre-Install Host (Software)</li>
+        <li><span class="dot-bullet"></span>Pre-Install Player (PI)</li>
+        <li><span class="dot-bullet"></span>Pre-Install TV</li>
+        <li><span class="dot-bullet"></span>Actual Install (Game Day)</li>
+      </ul>
+
+      <p class="footnote">For existing title, click Add Task button to add a checklist item, then click Save Task to publish.</p>
+      <div class="card-actions">
+        <button class="btn btn-outline">Add Task</button>
+        <button class="btn btn-outline">Save task</button>
+      </div>
+    </div>
+
+    <div class="progress-stack">
+      <div class="progress-card">
+        <div class="progress-card__head">
+          <span class="progress-card__title">Pre-Install Host (Software)</span>
+          <div class="progress-bar"><span style="width: 83%"></span></div>
+          <span class="progress-card__pct">83%</span>
+        </div>
+        <ul class="checklist">
+          <li class="is-done">Host created in software &mdash; edit</li>
+          <li class="is-done">Host address correct</li>
+          <li class="is-done">Host hours of operation from install form correct</li>
+          <li class="is-done">Host time zone correct</li>
+          <li>Lic temporally activated</li>
+        </ul>
+      </div>
+
+      <div class="progress-card">
+        <div class="progress-card__head">
+          <span class="progress-card__title">Pre-Install Player (PI)</span>
+          <div class="progress-bar"><span style="width: 25%"></span></div>
+          <span class="progress-card__pct">25%</span>
+        </div>
+        <ul class="checklist">
+          <li class="is-done">Crontab set</li>
+          <li>Screen blank disabled (pi3)</li>
+          <li>Screen saver disabled (pi3)</li>
+          <li>/boot/config.txt</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Parallax starfield, reused from the NTV screensavers.
+  function generateStarShadows(count, spread) {
+    const shadows = [];
+    for (let i = 0; i < count; i++) {
+      const x = Math.floor(Math.random() * spread);
+      const y = Math.floor(Math.random() * spread);
+      shadows.push(`${x}px ${y}px #FFF`);
+    }
+    return shadows.join(", ");
+  }
+  ["stars", "stars2", "stars3"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.style.boxShadow = generateStarShadows(120, 900);
+  });
+
+  const panelWaiting = document.getElementById('panel-waiting');
+  const panelLoading = document.getElementById('panel-loading');
+  const panelSuccess = document.getElementById('panel-success');
+
+  function showPanel(el) {
+    [panelWaiting, panelLoading, panelSuccess].forEach((p) => { p.hidden = true; });
+    el.hidden = false;
+  }
+
+  const inputs = Array.from(document.querySelectorAll('#code-inputs input'));
+  const submitBtn = document.getElementById('submit-pair');
+  const caption = document.getElementById('code-caption');
+
+  function currentCode() {
+    return inputs.map((i) => i.value).join('');
+  }
+
+  function updateSubmitState() {
+    const filled = currentCode().length;
+    submitBtn.disabled = filled !== inputs.length;
+    caption.textContent = filled === 0
+      ? 'Type the code shown on the screen'
+      : `${filled} of ${inputs.length} characters entered`;
+  }
+
+  inputs.forEach((input, idx) => {
+    input.addEventListener('input', () => {
+      input.value = input.value.toUpperCase().slice(-1);
+      if (input.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+      updateSubmitState();
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && idx > 0) inputs[idx - 1].focus();
+    });
+
+    input.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const chars = (e.clipboardData.getData('text') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').split('');
+      inputs.forEach((box, i) => { box.value = chars[i] || ''; });
+      updateSubmitState();
+      (inputs.find((box) => !box.value) || inputs[inputs.length - 1]).focus();
+    });
+  });
+
+  document.getElementById('clear-code').addEventListener('click', () => {
+    inputs.forEach((box) => { box.value = ''; });
+    updateSubmitState();
+    inputs[0].focus();
+  });
+
+  submitBtn.addEventListener('click', () => {
+    if (submitBtn.disabled) return;
+    document.getElementById('loading-heading').textContent = `Pairing ${currentCode()}…`;
+    showPanel(panelLoading);
+    setTimeout(() => showPanel(panelSuccess), 1800);
+  });
+
+  document.getElementById('view-license').addEventListener('click', () => {
+    document.getElementById('field-dealer').textContent = 'Pho Saigon';
+    document.getElementById('field-dealer').classList.remove('placeholder');
+    document.getElementById('field-hours').textContent = 'Monday: Open 24 hours';
+    document.getElementById('field-hours').classList.remove('placeholder');
+    document.getElementById('field-hostname').textContent = '219-RKT';
+    document.getElementById('field-hostname').classList.remove('placeholder');
+    document.getElementById('show-analytics').disabled = false;
+
+    panelWaiting.hidden = true;
+    panelLoading.hidden = true;
+    panelSuccess.hidden = true;
+    document.getElementById('paired-content').hidden = false;
+  });
+
+  document.getElementById('today').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+</script>
+</body>
+</html>

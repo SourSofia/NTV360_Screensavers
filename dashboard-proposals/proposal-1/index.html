@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>n-Compass — Pairing Modal Proposal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green: #6FBE45;
+    --green-dark: #56A233;
+    --text: #1F2937;
+    --muted: #6B7280;
+    --border: #E5E7EB;
+    --bg: #FFFFFF;
+    --bg-soft: #F9FAFB;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  [hidden] { display: none !important; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-soft);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .proposal-tag {
+    position: relative;
+    background: #111827;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-align: center;
+    padding: 12px 220px;
+  }
+
+  .back-home {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 999px;
+  }
+
+  .back-home:hover { background: rgba(255, 255, 255, 0.22); }
+
+  /* ---------- Top nav ---------- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 14px 28px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 800;
+    font-size: 19px;
+    color: #111827;
+    white-space: nowrap;
+  }
+
+  .logo .dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid var(--green);
+    position: relative;
+  }
+
+  .logo .dot::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .logo sup {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    flex: 1;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .nav-link.active { color: var(--green-dark); }
+  .nav-link .chev { font-size: 10px; opacity: 0.6; }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: var(--muted);
+    font-size: 13px;
+    width: 220px;
+  }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--muted);
+    font-size: 16px;
+  }
+
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .user-chip .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .user-chip .name { font-weight: 700; line-height: 1.2; }
+  .user-chip .role { color: var(--muted); font-size: 11px; }
+
+  /* ---------- Page body ---------- */
+  .page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 28px 60px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  .breadcrumb a { color: var(--green-dark); text-decoration: none; font-weight: 600; }
+  .breadcrumb .sep { color: #D1D5DB; }
+  .breadcrumb .current { color: var(--text); font-weight: 700; }
+  .breadcrumb .date { margin-left: auto; color: var(--muted); }
+
+  .dealer-bar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .dealer-info {
+    display: flex;
+    gap: 40px;
+  }
+
+  .dealer-info .field { font-size: 13px; }
+  .dealer-info .field .k { color: var(--muted); margin-right: 6px; }
+  .dealer-info .field .v { font-weight: 700; color: var(--text); }
+  .dealer-info .field .v.placeholder { color: #C4C9CF; font-weight: 500; }
+
+  .dealer-actions { display: flex; gap: 10px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+
+  .btn-primary { background: var(--green); color: #fff; }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-outline { background: #fff; border-color: var(--border); color: var(--text); }
+  .btn-outline:disabled, .btn-primary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .btn-ghost { background: transparent; color: var(--muted); border: 0; font-weight: 600; }
+
+  .tabs {
+    display: flex;
+    gap: 34px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+
+  .tab {
+    padding: 6px 2px 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #C4C9CF;
+    border-bottom: 2px solid transparent;
+  }
+
+  .tab.active {
+    color: var(--green-dark);
+    border-bottom-color: var(--green-dark);
+  }
+
+  /* ---------- Details and Content — empty state ---------- */
+  .empty-panel {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    padding: 90px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .empty-panel .icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--bg-soft);
+    color: #9CA3AF;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+
+  .empty-panel h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .empty-panel p {
+    margin: 0 0 8px;
+    max-width: 360px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .empty-panel__link {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .empty-panel__link:hover { color: var(--green-dark); }
+
+  /* ---------- Populated mockup (after pairing) ---------- */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--bg);
+    padding: 24px;
+  }
+
+  .card h2 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .card .hint {
+    margin: 0 0 20px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .add-title-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .add-title-row input {
+    flex: 1;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+  }
+
+  .add-title-row input::placeholder { color: #B8BEC7; }
+
+  .title-list {
+    list-style: none;
+    margin: 0 0 20px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .title-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green-dark);
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .title-list li:last-child { border-bottom: 0; }
+
+  .dot-bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  .card .footnote {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .card-actions { display: flex; gap: 10px; }
+
+  .progress-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .progress-card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--bg);
+    padding: 20px 24px;
+  }
+
+  .progress-card__head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .progress-card__title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--green-dark);
+    white-space: nowrap;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--bg-soft);
+    overflow: hidden;
+  }
+
+  .progress-bar span {
+    display: block;
+    height: 100%;
+    background: var(--green);
+    border-radius: 999px;
+  }
+
+  .progress-card__pct {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    width: 32px;
+    text-align: right;
+  }
+
+  .checklist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .checklist li {
+    position: relative;
+    padding-left: 26px;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .checklist li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .checklist li.is-done {
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+
+  .checklist li.is-done::before {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .checklist li.is-done::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 5px;
+    width: 8px;
+    height: 4px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(-45deg);
+  }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .modal-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal {
+    width: 440px;
+    max-width: 92vw;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 30px 80px -20px rgba(17, 24, 39, 0.35);
+    padding: 28px 28px 24px;
+    transform: translateY(12px) scale(0.98);
+    transition: transform 0.25s ease;
+  }
+
+  .modal-overlay.is-open .modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 22px;
+  }
+
+  .modal-head h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .modal-close {
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+  }
+
+  .modal-state { display: none; flex-direction: column; gap: 16px; }
+  .modal-state.is-visible { display: flex; }
+  .modal-state.is-centered { align-items: center; text-align: center; }
+
+  .modal-sub {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .modal-sub strong { color: var(--text); }
+
+  /* Example-code hint row — a little monitor mockup (with a stand),
+     grayed out so it clearly reads as "this is what your screen looks
+     like" rather than an active code the user could mistakenly type. */
+  .example-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .example-screen {
+    position: relative;
+    flex-shrink: 0;
+    width: 110px;
+    padding: 12px 8px 10px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-soft);
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .example-screen::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 6px;
+    background: var(--border);
+    border-radius: 0 0 3px 3px;
+  }
+
+  .example-screen__label {
+    display: block;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #B8BEC7;
+    margin-bottom: 3px;
+  }
+
+  .example-screen__code {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: #9CA3AF;
+  }
+
+  .example-row p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* Six-digit code entry */
+  .code-inputs {
+    display: flex;
+    gap: 8px;
+  }
+
+  .code-inputs input {
+    width: 100%;
+    height: 54px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 800;
+    font-family: inherit;
+    color: var(--text);
+    text-transform: uppercase;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .code-inputs input:focus {
+    outline: none;
+    border-color: var(--green);
+    background: #fff;
+  }
+
+  .refresh-hint {
+    margin: 0;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
+    margin-top: 6px;
+  }
+
+  .modal-actions .btn { flex: 1; justify-content: center; }
+
+  .spinner {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 4px solid var(--border);
+    border-top-color: var(--green);
+    animation: spin 0.9s linear infinite;
+    margin-top: 8px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .success-check {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #F0F8E9;
+    color: var(--green-dark);
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="proposal-tag">
+  <a class="back-home" href="../../index.html">&larr; Back to home</a>
+  DESIGN PROPOSAL — Dealer License Page (empty / unpaired state) + Pairing Modal
+</div>
+
+<header class="topbar">
+  <div class="logo"><span class="dot"></span>n<span style="color:var(--muted); font-weight:600;">·</span>compass<sup>TV</sup></div>
+  <nav class="nav-links">
+    <a class="nav-link active" href="#">&#9638; Dashboard</a>
+    <a class="nav-link" href="#">Dealers <span class="chev">&#9662;</span></a>
+    <a class="nav-link" href="#">Media Library <span class="chev">&#9662;</span></a>
+    <a class="nav-link" href="#">Channel <span class="chev">&#9662;</span></a>
+    <a class="nav-link" href="#">Screens <span class="chev">&#9662;</span></a>
+    <a class="nav-link" href="#">Directory <span class="chev">&#9662;</span></a>
+  </nav>
+  <div class="topbar-right">
+    <div class="search">&#128269; Search</div>
+    <span class="icon-btn">&#9728;</span>
+    <span class="icon-btn">&#128276;</span>
+    <div class="user-chip">
+      <span class="avatar">&#128100;</span>
+      <span>
+        <div class="name">Lorem Ipsum</div>
+        <div class="role">Super Admin</div>
+      </span>
+      <span class="chev">&#9662;</span>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <div class="breadcrumb">
+    <a href="#">Dealers</a><span class="sep">&rsaquo;</span>
+    <a href="#">Licenses</a><span class="sep">&rsaquo;</span>
+    <span class="current">Single License Page</span>
+    <span class="date" id="today">Wednesday, September 04, 2024</span>
+  </div>
+
+  <div class="dealer-bar">
+    <div class="dealer-info">
+      <div class="field"><span class="k">Dealer Name:</span><span class="v placeholder" id="field-dealer">Not paired yet</span></div>
+      <div class="field"><span class="k">Business Hours:</span><span class="v placeholder" id="field-hours">&mdash;</span></div>
+      <div class="field"><span class="k">Hostname:</span><span class="v placeholder" id="field-hostname">&mdash;</span></div>
+      <div class="field"><span class="k">License Key:</span><span class="v">f02d627e-44fe-476f-8808-bf6d511179c1</span></div>
+    </div>
+    <div class="dealer-actions">
+      <button class="btn btn-outline" id="show-analytics" disabled>&#10094; Show Analytics</button>
+      <button class="btn btn-primary" id="open-pair-modal">Pair This Display &#10095;</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <span class="tab active">Details and Content</span>
+    <span class="tab">Terminal and Activity</span>
+    <span class="tab">Setting</span>
+    <span class="tab">Installation</span>
+  </div>
+
+  <div class="empty-panel" id="empty-panel">
+    <div class="icon">&#128421;</div>
+    <h2>No device paired yet</h2>
+    <p>Details and content will appear here once a screen is connected to this license. Pair it using the 6-character code shown on the screen.</p>
+    <button class="btn btn-primary" id="open-pair-modal-2">Pair a device</button>
+    <a class="empty-panel__link" href="#">No code on screen? Restart the player and try again.</a>
+  </div>
+
+  <!-- Populated mockup, shown after a successful pairing (illustrative only) -->
+  <div class="content-grid" id="paired-content" hidden>
+    <div class="card">
+      <h2>Checklist Control</h2>
+      <p class="hint">Fill up this section if the title you are looking for is not existing on the available title list.</p>
+
+      <span class="field-label">Add Title</span>
+      <div class="add-title-row">
+        <input type="text" placeholder="Note: This will be the headline per checklist. (Ex. Day 1 - Installation)" />
+        <button class="btn btn-primary">Save Title</button>
+      </div>
+
+      <span class="field-label">Available Titles:</span>
+      <ul class="title-list">
+        <li><span class="dot-bullet"></span>Pre-Install Host (Software)</li>
+        <li><span class="dot-bullet"></span>Pre-Install Player (PI)</li>
+        <li><span class="dot-bullet"></span>Pre-Install TV</li>
+        <li><span class="dot-bullet"></span>Actual Install (Game Day)</li>
+      </ul>
+
+      <p class="footnote">For existing title, click Add Task button to add a checklist item, then click Save Task to publish.</p>
+      <div class="card-actions">
+        <button class="btn btn-outline">Add Task</button>
+        <button class="btn btn-outline">Save task</button>
+      </div>
+    </div>
+
+    <div class="progress-stack">
+      <div class="progress-card">
+        <div class="progress-card__head">
+          <span class="progress-card__title">Pre-Install Host (Software)</span>
+          <div class="progress-bar"><span style="width: 83%"></span></div>
+          <span class="progress-card__pct">83%</span>
+        </div>
+        <ul class="checklist">
+          <li class="is-done">Host created in software &mdash; edit</li>
+          <li class="is-done">Host address correct</li>
+          <li class="is-done">Host hours of operation from install form correct</li>
+          <li class="is-done">Host time zone correct</li>
+          <li>Lic temporally activated</li>
+        </ul>
+      </div>
+
+      <div class="progress-card">
+        <div class="progress-card__head">
+          <span class="progress-card__title">Pre-Install Player (PI)</span>
+          <div class="progress-bar"><span style="width: 25%"></span></div>
+          <span class="progress-card__pct">25%</span>
+        </div>
+        <ul class="checklist">
+          <li class="is-done">Crontab set</li>
+          <li>Screen blank disabled (pi3)</li>
+          <li>Screen saver disabled (pi3)</li>
+          <li>/boot/config.txt</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pairing modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Pair a device</h3>
+      <button class="modal-close" id="modal-close">&#10005;</button>
+    </div>
+
+    <!-- State 1: enter the code shown on the screensaver -->
+    <div class="modal-state is-visible" id="state-code">
+      <div class="example-row">
+        <div class="example-screen">
+          <span class="example-screen__label">e.g.</span>
+          <span class="example-screen__code">######</span>
+        </div>
+        <p>Look for the 6-character code on the screen you want to connect, then type it below.</p>
+      </div>
+
+      <div class="code-inputs" id="code-inputs">
+        <input type="text" inputmode="text" maxlength="1" autocomplete="off" />
+        <input type="text" inputmode="text" maxlength="1" autocomplete="off" />
+        <input type="text" inputmode="text" maxlength="1" autocomplete="off" />
+        <input type="text" inputmode="text" maxlength="1" autocomplete="off" />
+        <input type="text" inputmode="text" maxlength="1" autocomplete="off" />
+        <input type="text" inputmode="text" maxlength="1" autocomplete="off" />
+      </div>
+      <p class="refresh-hint">The code refreshes on screen every 15 minutes.</p>
+
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="cancel-pair">Cancel</button>
+        <button class="btn btn-primary" id="submit-pair" disabled>Pair device</button>
+      </div>
+    </div>
+
+    <!-- State 2: pairing in progress -->
+    <div class="modal-state is-centered" id="state-loading">
+      <div class="spinner"></div>
+      <p class="modal-sub"><strong id="loading-code">Pairing 123456&hellip;</strong><br />Connecting to the player and pulling in its details. This usually takes a few seconds.</p>
+    </div>
+
+    <!-- State 3: success -->
+    <div class="modal-state is-centered" id="state-success">
+      <div class="success-check">&#10003;</div>
+      <p class="modal-sub"><strong>Paired with Pho Saigon</strong><br />Dealer 219-RKT is now linked to this license.</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="finish-pair">View license</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const overlay = document.getElementById('modal-overlay');
+  const stateCode = document.getElementById('state-code');
+  const stateLoading = document.getElementById('state-loading');
+  const stateSuccess = document.getElementById('state-success');
+
+  function showState(el) {
+    [stateCode, stateLoading, stateSuccess].forEach((s) => s.classList.remove('is-visible'));
+    el.classList.add('is-visible');
+  }
+
+  function openModal() {
+    overlay.classList.add('is-open');
+    showState(stateCode);
+    resetCodeInputs();
+  }
+
+  function closeModal() {
+    overlay.classList.remove('is-open');
+  }
+
+  document.getElementById('open-pair-modal').addEventListener('click', openModal);
+  document.getElementById('open-pair-modal-2').addEventListener('click', openModal);
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('cancel-pair').addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+  document.getElementById('finish-pair').addEventListener('click', () => {
+    closeModal();
+
+    // Illustrative only — swap the empty state for a populated mockup.
+    document.getElementById('field-dealer').textContent = 'Pho Saigon';
+    document.getElementById('field-dealer').classList.remove('placeholder');
+    document.getElementById('field-hours').textContent = 'Monday: Open 24 hours';
+    document.getElementById('field-hours').classList.remove('placeholder');
+    document.getElementById('field-hostname').textContent = '219-RKT';
+    document.getElementById('field-hostname').classList.remove('placeholder');
+    document.getElementById('show-analytics').disabled = false;
+    document.getElementById('open-pair-modal').textContent = 'Re-pair Display';
+
+    document.getElementById('empty-panel').hidden = true;
+    document.getElementById('paired-content').hidden = false;
+  });
+
+  // Six-box code entry — the code is generated on the screen (screensaver),
+  // not here; the dashboard user just types what they see.
+  const inputs = Array.from(document.querySelectorAll('#code-inputs input'));
+  const submitBtn = document.getElementById('submit-pair');
+
+  function currentCode() {
+    return inputs.map((i) => i.value).join('');
+  }
+
+  function updateSubmitState() {
+    submitBtn.disabled = currentCode().length !== inputs.length;
+  }
+
+  inputs.forEach((input, idx) => {
+    input.addEventListener('input', () => {
+      input.value = input.value.toUpperCase().slice(-1);
+      if (input.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+      updateSubmitState();
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && idx > 0) {
+        inputs[idx - 1].focus();
+      }
+    });
+
+    input.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const chars = (e.clipboardData.getData('text') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').split('');
+      inputs.forEach((box, i) => { box.value = chars[i] || ''; });
+      updateSubmitState();
+      (inputs.find((box) => !box.value) || inputs[inputs.length - 1]).focus();
+    });
+  });
+
+  function resetCodeInputs() {
+    inputs.forEach((box) => { box.value = ''; });
+    updateSubmitState();
+    inputs[0].focus();
+  }
+
+  submitBtn.addEventListener('click', () => {
+    if (submitBtn.disabled) return;
+    document.getElementById('loading-code').textContent = `Pairing ${currentCode()}…`;
+    showState(stateLoading);
+    setTimeout(() => showState(stateSuccess), 1800);
+  });
+
+  document.getElementById('today').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+</script>
+</body>
+</html>
