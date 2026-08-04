@@ -20,20 +20,16 @@
   .aurora-2 { bottom: -18%; left: -8%; width: 50%; height: 75%; background: radial-gradient(circle, #A00558 0%, rgba(160,5,88,0) 70%); animation-delay: -10s; }
   #particle-canvas { position: absolute; inset: 0; pointer-events: none; }
   .pin-tile {
-    width: clamp(68px, 8vw, 140px);
-    aspect-ratio: 0.8;
-    border-radius: 10px;
+    width: clamp(110px, 11.5vw, 195px);
+    aspect-ratio: 0.9;
+    border-radius: 16px;
     background: rgba(253,253,253,0.06);
     border: 1px solid rgba(253,253,253,0.14);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(2.6rem, 5.5vw, 5.5rem);
+    font-size: clamp(4.2rem, 7.8vw, 7.4rem);
     font-weight: 800;
-  }
-  .pin-tile--accent {
-    background: linear-gradient(135deg, #A00558, #EF060F 55%, #F18029);
-    border: none;
   }
 </style>
 </head>
@@ -48,7 +44,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <img src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" style="height: clamp(20px, 2.6vw, 30px); width: auto; align-self: flex-start;">
       <div style="display: flex; align-items: center; gap: 16px; font-family: 'JetBrains Mono', monospace; font-size: clamp(0.65rem, 0.85vw, 0.8rem); color: rgba(253,253,253,0.55);">
-        <span>NTV-9034</span>
+        <span id="today">Thursday, July 30, 2026</span>
         <span style="width: 1px; height: 14px; background: rgba(253,253,253,0.25);"></span>
         <span id="clock">5:51 PM</span>
       </div>
@@ -58,21 +54,23 @@
       <div style="display: flex; flex-direction: column; gap: 1.4rem;">
         <span style="font-family: 'JetBrains Mono', monospace; font-size: clamp(0.65rem, 0.85vw, 0.8rem); letter-spacing: 0.3em; text-transform: uppercase; color: #F18029;">Keynote display</span>
         <h1 style="margin: 0; font-size: clamp(2.1rem, 3.9vw, 3.4rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em;">Ready to pair with your dashboard</h1>
-        <p style="margin: 0; font-size: clamp(0.85rem, 1.15vw, 1.05rem); line-height: 1.7; color: rgba(253,253,253,0.65); max-width: 28em;">Go to <strong style="color:#FDFDFD;">dashboard.ntv360.com</strong>, choose <strong style="color:#FDFDFD;">Screens &rarr; Add a display</strong>, and type the code shown here.</p>
+
+        <span style="font-size: clamp(0.65rem, 0.85vw, 0.8rem); color: rgba(253,253,253,0.5); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; text-transform: uppercase;">Or scan to pair</span>
+
+        <div style="width: clamp(72px, 7.5vw, 110px); aspect-ratio: 1; border-radius: 10px; background: #FDFDFD; padding: 8px; flex-shrink: 0;">
+          <div style="width: 100%; height: 100%; border-radius: 5px; background: repeating-linear-gradient(45deg, #231F20 0 3px, #FDFDFD 3px 6px);"></div>
+        </div>
       </div>
 
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 1.4rem;">
-        <div style="display: flex; gap: clamp(0.5rem, 1vw, 0.85rem);">
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(0.6rem, 1.2vw, 1rem);">
           <div class="pin-tile">Z</div>
           <div class="pin-tile">5</div>
           <div class="pin-tile pin-tile--accent">Y</div>
           <div class="pin-tile">1</div>
           <div class="pin-tile">C</div>
+          <div class="pin-tile">8</div>
         </div>
-        <div style="width: clamp(90px, 10vw, 150px); aspect-ratio: 1; border-radius: 12px; background: #FDFDFD; padding: 10px;">
-          <div style="width: 100%; height: 100%; border-radius: 6px; background: repeating-linear-gradient(45deg, #231F20 0 3px, #FDFDFD 3px 6px);"></div>
-        </div>
-        <span style="font-size: clamp(0.65rem, 0.85vw, 0.8rem); color: rgba(253,253,253,0.5); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; text-transform: uppercase;">Or scan to pair</span>
       </div>
     </div>
 
@@ -87,7 +85,9 @@
 </div>
 <script>
 function updateClock() {
-  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  var now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  document.getElementById('today').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 }
 updateClock();
 setInterval(updateClock, 1000);

@@ -70,11 +70,6 @@
     font-weight: 800;
   }
 
-  /* When steps are hidden, the accent tile goes too, per the "no accent" variant. */
-  .poster.no-accent .code-tile--last {
-    background: #00263E;
-  }
-
   /* Fluid poster — every size below is clamp()'d against viewport height/width
      so it fills any screen naturally with no scaling or letterboxing. At a
      1920x1080 TV the clamp maxes are what the design was authored at. */
@@ -295,9 +290,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: clamp(115px, 29vh, 310px);
+    height: clamp(90px, 22vh, 240px);
     color: #FDFDFD;
-    font-size: clamp(76px, 19vh, 205px);
+    font-size: clamp(56px, 14vh, 150px);
     font-weight: 800;
     line-height: 1;
     background: #00263E;
@@ -327,10 +322,6 @@
     0% { transform: translateX(-150%) skewX(-20deg); }
     12% { transform: translateX(250%) skewX(-20deg); }
     100% { transform: translateX(250%) skewX(-20deg); }
-  }
-
-  .code-tile--last {
-    background: linear-gradient(45deg, #A00558, #EF060F 50%, #F18029);
   }
 
   .qr-row {
@@ -385,7 +376,7 @@
 
   .footer-logo {
     display: block;
-    height: clamp(48px, 8.3vh, 90px);
+    height: clamp(30px, 5.2vh, 56px);
     width: auto;
   }
 

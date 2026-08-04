@@ -1,4 +1,5 @@
-// Floating "View Source" button + slide-in panel showing this page's own HTML.
+// Floating "View Source" button + slide-in panel showing this page's own
+// HTML and CSS in separate tabs.
 (function () {
   if (!document.getElementById('vs-font-link')) {
     const fontLink = document.createElement('link');
@@ -21,11 +22,17 @@
   panel.innerHTML = `
     <div id="view-source-header">
       <div id="view-source-dots"><span></span><span></span><span></span></div>
-      <span id="view-source-title">index.html</span>
+      <div id="view-source-tabs">
+        <button class="vs-tab is-active" data-tab="html" type="button">HTML</button>
+        <button class="vs-tab" data-tab="css" type="button">CSS</button>
+        <button class="vs-tab" data-tab="js" type="button">JS</button>
+      </div>
       <button id="view-source-close" aria-label="Close">&times;</button>
     </div>
     <div id="view-source-body">
-      <div id="view-source-code">Loading…</div>
+      <div id="view-source-code" data-pane="html">Loading&hellip;</div>
+      <div id="view-source-code-css" data-pane="css" hidden>Loading&hellip;</div>
+      <div id="view-source-code-js" data-pane="js" hidden>Loading&hellip;</div>
     </div>
   `;
 
@@ -96,7 +103,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 16px;
+      padding: 10px 16px;
       background: #2d2d2d;
       border-bottom: 1px solid rgba(255,255,255,0.08);
       flex-shrink: 0;
@@ -108,11 +115,29 @@
       border-radius: 50%;
       background: #4a4a4a;
     }
-    #view-source-title {
+    #view-source-tabs {
       flex: 1;
-      text-align: center;
-      font: 500 13px system-ui, sans-serif;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+    .vs-tab {
+      appearance: none;
+      border: 1px solid transparent;
+      background: transparent;
       color: #9aa0a6;
+      font: 600 12px/1 'Plus Jakarta Sans', system-ui, sans-serif;
+      letter-spacing: 0.03em;
+      padding: 7px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .vs-tab:hover { color: #fff; }
+    .vs-tab.is-active {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.14);
+      color: #fff;
     }
     #view-source-close {
       background: none;
@@ -129,13 +154,20 @@
       overflow: auto;
       background: #1e1e1e;
     }
-    #view-source-code {
+    #view-source-code,
+    #view-source-code-css,
+    #view-source-code-js {
       display: grid;
       grid-template-columns: auto 1fr;
       width: 100%;
       font: 13px/1.6 'Space Mono', Consolas, monospace;
       tab-size: 2;
       -moz-tab-size: 2;
+    }
+    #view-source-code[hidden],
+    #view-source-code-css[hidden],
+    #view-source-code-js[hidden] {
+      display: none;
     }
     .vs-line-num {
       background: #1e1e1e;
@@ -155,7 +187,10 @@
   document.head.appendChild(style);
   document.body.append(overlay, panel, btn);
 
-  const codeEl = panel.querySelector('#view-source-code');
+  const htmlPane = panel.querySelector('#view-source-code');
+  const cssPane = panel.querySelector('#view-source-code-css');
+  const jsPane = panel.querySelector('#view-source-code-js');
+  const tabs = Array.from(panel.querySelectorAll('.vs-tab'));
   let loaded = false;
 
   function escapeHtml(str) {
@@ -165,22 +200,98 @@
       .replace(/>/g, '&gt;');
   }
 
-  function renderCode(html) {
-    const lines = html.split('\n');
-    codeEl.innerHTML = lines
+  function renderCode(el, text) {
+    const lines = text.split('\n');
+    el.innerHTML = lines
       .map((line, i) => `<div class="vs-line-num">${i + 1}</div><div class="vs-line-code">${escapeHtml(line) || ' '}</div>`)
       .join('');
+  }
+
+  function switchTab(name) {
+    tabs.forEach((t) => t.classList.toggle('is-active', t.dataset.tab === name));
+    htmlPane.hidden = name !== 'html';
+    cssPane.hidden = name !== 'css';
+    jsPane.hidden = name !== 'js';
+  }
+
+  // Finds this screensaver's own stylesheet link (its "style.css"), as
+  // opposed to the shared brand.css or Google Fonts links.
+  function findOwnStylesheetHref(html) {
+    const linkRegex = /<link[^>]+href=["']([^"']+\.css)["'][^>]*>/gi;
+    let match;
+    while ((match = linkRegex.exec(html))) {
+      const href = match[1];
+      if (/(^|\/)style\.css(\?.*)?$/i.test(href)) return href;
+    }
+    return null;
+  }
+
+  function extractInlineStyle(html) {
+    const match = html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+    return match ? match[1].trim() : null;
+  }
+
+  // Finds this screensaver's own external script (its "script.js"), as
+  // opposed to the shared view-source.js loader.
+  function findOwnScriptSrc(html) {
+    const scriptRegex = /<script[^>]+src=["']([^"']+\.js)["'][^>]*>/gi;
+    let match;
+    while ((match = scriptRegex.exec(html))) {
+      const src = match[1];
+      if (/(^|\/)script\.js(\?.*)?$/i.test(src)) return src;
+    }
+    return null;
+  }
+
+  // Concatenates any inline <script> blocks (skips src-based ones, which
+  // is how the shared view-source.js loader is always included).
+  function extractInlineScripts(html) {
+    const blocks = [];
+    const scriptRegex = /<script(?![^>]*\ssrc=)[^>]*>([\s\S]*?)<\/script>/gi;
+    let match;
+    while ((match = scriptRegex.exec(html))) {
+      const content = match[1].trim();
+      if (content) blocks.push(content);
+    }
+    return blocks.length ? blocks.join('\n\n') : null;
   }
 
   function open() {
     overlay.classList.add('open');
     panel.classList.add('open');
-    if (!loaded) {
-      fetch(location.href)
-        .then((res) => res.text())
-        .then((html) => { renderCode(html); loaded = true; })
-        .catch(() => { codeEl.textContent = 'Unable to load source (view may need to be served over http).'; });
-    }
+    if (loaded) return;
+    loaded = true;
+
+    fetch(location.href)
+      .then((res) => res.text())
+      .then((html) => {
+        renderCode(htmlPane, html);
+
+        const cssHref = findOwnStylesheetHref(html);
+        if (cssHref) {
+          fetch(new URL(cssHref, location.href))
+            .then((res) => res.text())
+            .then((css) => renderCode(cssPane, css))
+            .catch(() => { cssPane.textContent = 'Unable to load stylesheet.'; });
+        } else {
+          const inlineCss = extractInlineStyle(html);
+          renderCode(cssPane, inlineCss || '/* No separate CSS — styles are inlined in the HTML tab. */');
+        }
+
+        const jsSrc = findOwnScriptSrc(html);
+        if (jsSrc) {
+          fetch(new URL(jsSrc, location.href))
+            .then((res) => res.text())
+            .then((js) => renderCode(jsPane, js))
+            .catch(() => { jsPane.textContent = 'Unable to load script.'; });
+        } else {
+          const inlineJs = extractInlineScripts(html);
+          renderCode(jsPane, inlineJs || '// This screensaver has no JavaScript of its own.');
+        }
+      })
+      .catch(() => {
+        htmlPane.textContent = 'Unable to load source (view may need to be served over http).';
+      });
   }
 
   function close() {
@@ -191,4 +302,5 @@
   btn.addEventListener('click', open);
   overlay.addEventListener('click', close);
   panel.querySelector('#view-source-close').addEventListener('click', close);
+  tabs.forEach((t) => t.addEventListener('click', () => switchTab(t.dataset.tab)));
 })();

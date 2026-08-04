@@ -15,6 +15,7 @@
   .back-link:hover { opacity: 1; }
   .canvas { position: absolute; top: 0; left: 0; width: 1280px; height: 720px; transform-origin: top left; }
   @keyframes floatAurora { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px,25px) scale(1.08); } 100% { transform: translate(25px,-30px) scale(0.95); } }
+  @keyframes statusPulse { 0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 10px #F18029; } 50% { transform: scale(1.35); opacity: 0.5; box-shadow: 0 0 4px #F18029; } }
   .aurora { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .35; pointer-events: none; animation: floatAurora 20s ease-in-out infinite alternate; }
   .aurora-1 { top: -12%; right: -8%; width: 46%; height: 70%; background: radial-gradient(circle, #F18029 0%, rgba(241,128,41,0) 70%); }
   .aurora-2 { bottom: -18%; left: -8%; width: 50%; height: 75%; background: radial-gradient(circle, #A00558 0%, rgba(160,5,88,0) 70%); animation-delay: -10s; }
@@ -29,24 +30,27 @@
     <div class="aurora aurora-1"></div>
     <div class="aurora aurora-2"></div>
     <div style="position: absolute; inset: 28px; border: 1px solid rgba(253,253,253,0.16); border-radius: 20px;"></div>
-    <div style="width: 760px; padding: 56px 64px; border-radius: 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.14); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 26px; color: #FDFDFD;">
+    <div style="width: 980px; padding: 56px 64px; border-radius: 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.14); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 26px; color: #FDFDFD;">
       <img src="../../assets/img/NTV_logo_gradient_horz_.png" alt="NTV 360" style="height: 30px; width: auto;">
       <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: #F18029; font-weight: 700;">Screen setup</span>
       <h1 style="margin: 0; font-size: 38px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15;">Enter this code in your NTV 360 dashboard</h1>
 
-      <div style="display: flex; gap: 10px;">
-        <div style="width: 84px; height: 104px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 56px; font-weight: 800;">4</div>
-        <div style="width: 84px; height: 104px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 56px; font-weight: 800;">R</div>
-        <div style="width: 84px; height: 104px; border-radius: 10px; background: linear-gradient(135deg, #A00558, #EF060F 55%, #F18029); display: flex; align-items: center; justify-content: center; font-size: 56px; font-weight: 800;">J</div>
-        <div style="width: 84px; height: 104px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 56px; font-weight: 800;">8</div>
-        <div style="width: 84px; height: 104px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 56px; font-weight: 800;">V</div>
-        <div style="width: 84px; height: 104px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 56px; font-weight: 800;">1</div>
+      <div style="display: flex; gap: 16px;">
+        <div style="width: 122px; height: 150px; border-radius: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 84px; font-weight: 800;">4</div>
+        <div style="width: 122px; height: 150px; border-radius: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 84px; font-weight: 800;">R</div>
+        <div style="width: 122px; height: 150px; border-radius: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 84px; font-weight: 800;">J</div>
+        <div style="width: 122px; height: 150px; border-radius: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 84px; font-weight: 800;">8</div>
+        <div style="width: 122px; height: 150px; border-radius: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 84px; font-weight: 800;">V</div>
+        <div style="width: 122px; height: 150px; border-radius: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 84px; font-weight: 800;">1</div>
       </div>
 
       <div style="width: 100%; height: 1px; background: rgba(255,255,255,0.14);"></div>
 
       <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 13px; color: rgba(253,253,253,0.6);">
-        <span>dashboard.ntv360.com &rarr; Screens &rarr; Add a display</span>
+        <span style="display: flex; align-items: center; gap: 8px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #F18029; animation: statusPulse 2s infinite ease-in-out;"></span>
+          Online &mdash; awaiting pairing
+        </span>
         <span id="clock">5:51 PM</span>
       </div>
     </div>
