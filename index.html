@@ -15,6 +15,7 @@
     <nav class="top-nav">
       <button class="top-nav__tab is-active" type="button" data-view="screensavers">Screensavers</button>
       <button class="top-nav__tab" type="button" data-view="dashboard">Dashboard Proposals</button>
+      <button class="top-nav__tab" type="button" data-view="reviews">Reviews</button>
     </nav>
 
     <section class="view" id="view-screensavers">
@@ -132,26 +133,81 @@
         </a>
       </nav>
     </section>
+
+    <section class="view" id="view-reviews" hidden>
+      <h1 class="menu__title">Reviews</h1>
+      <p class="menu__subtitle">Customer review screensavers</p>
+
+      <nav class="menu__grid">
+        <a class="menu__card" href="reviews/review-1/index.html">
+          <span class="menu__card-preview"><iframe src="reviews/review-1/index.html" tabindex="-1" loading="lazy"></iframe></span>
+          <span class="menu__card-label">Google Review Spotlight</span>
+          <span class="menu__card-desc">Single 5-star review with drifting gradient background and glowing orbs</span>
+        </a>
+        <a class="menu__card" href="reviews/review-2/index.html">
+          <span class="menu__card-preview"><iframe src="reviews/review-2/index.html" tabindex="-1" loading="lazy"></iframe></span>
+          <span class="menu__card-label">Client Testimonial</span>
+          <span class="menu__card-desc">Light backdrop with floating brand blobs, spinning rings, and a testimonial card</span>
+        </a>
+        <a class="menu__card" href="reviews/review-3/index.html">
+          <span class="menu__card-preview"><iframe src="reviews/review-3/index.html" tabindex="-1" loading="lazy"></iframe></span>
+          <span class="menu__card-label">Split Panel</span>
+          <span class="menu__card-desc">Reviewer profile panel beside a large pull-quote</span>
+        </a>
+        <a class="menu__card" href="reviews/review-5/index.html">
+          <span class="menu__card-preview"><iframe src="reviews/review-5/index.html" tabindex="-1" loading="lazy"></iframe></span>
+          <span class="menu__card-label">Editorial Quote</span>
+          <span class="menu__card-desc">Oversized quotation mark behind a magazine-style pull-quote</span>
+        </a>
+        <a class="menu__card" href="reviews/review-6/index.html">
+          <span class="menu__card-preview"><iframe src="reviews/review-6/index.html" tabindex="-1" loading="lazy"></iframe></span>
+          <span class="menu__card-label">Light Score Card</span>
+          <span class="menu__card-desc">Light theme with a 5.0 score card beside the review text</span>
+        </a>
+        <a class="menu__card" href="reviews/review-7/index.html">
+          <span class="menu__card-preview"><iframe src="reviews/review-7/index.html" tabindex="-1" loading="lazy"></iframe></span>
+          <span class="menu__card-label">Color Block</span>
+          <span class="menu__card-desc">Brand-navy layout with a violet color-block sidebar</span>
+        </a>
+        <a class="menu__card" href="reviews/review-8/index.html">
+          <span class="menu__card-preview"><iframe src="reviews/review-8/index.html" tabindex="-1" loading="lazy"></iframe></span>
+          <span class="menu__card-label">Bold Banner</span>
+          <span class="menu__card-desc">Editorial layout with a giant quote mark and a violet score sidebar</span>
+        </a>
+      </nav>
+    </section>
   </main>
 
+  <script src="assets/js/view-source.js"></script>
   <script src="assets/js/launcher.js"></script>
   <script>
-    document.querySelectorAll(".top-nav__tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".top-nav__tab").forEach((t) => t.classList.remove("is-active"));
-        tab.classList.add("is-active");
-
-        const target = tab.dataset.view;
-        document.querySelectorAll(".view").forEach((view) => {
-          view.hidden = view.id !== `view-${target}`;
-        });
-
-        // Previews inside a hidden section have clientWidth 0 when
-        // scalePreviews() first ran at load, so their iframes got scaled
-        // to zero — recompute now that the section is visible.
-        if (typeof scalePreviews === "function") scalePreviews();
+    // Remembers the active tab across navigation (e.g. opening a card, then
+    // clicking "Back to menu") so the launcher reopens on the same tab
+    // instead of always resetting to Screensavers.
+    function activateTab(target) {
+      document.querySelectorAll(".top-nav__tab").forEach((t) => {
+        t.classList.toggle("is-active", t.dataset.view === target);
       });
+      document.querySelectorAll(".view").forEach((view) => {
+        view.hidden = view.id !== `view-${target}`;
+      });
+
+      // Previews inside a hidden section have clientWidth 0 when
+      // scalePreviews() first ran at load, so their iframes got scaled
+      // to zero — recompute now that the section is visible.
+      if (typeof scalePreviews === "function") scalePreviews();
+
+      sessionStorage.setItem("ntv-active-tab", target);
+    }
+
+    document.querySelectorAll(".top-nav__tab").forEach((tab) => {
+      tab.addEventListener("click", () => activateTab(tab.dataset.view));
     });
+
+    const savedTab = sessionStorage.getItem("ntv-active-tab");
+    if (savedTab && document.getElementById(`view-${savedTab}`)) {
+      activateTab(savedTab);
+    }
   </script>
 </body>
 </html>
